@@ -26,6 +26,7 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 
 EXPOSE 10000
 
+# Usa config:clear invece di config:cache per forzare la lettura delle variabili di Render
 CMD php artisan config:clear && \
     php artisan cache:clear && \
     php artisan storage:link && \
