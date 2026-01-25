@@ -23,4 +23,8 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --no-script
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 10000
+# Cambia l'ultima riga da così:
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=10000"]
+
+# A così (esegue le tabelle e poi avvia il server):
+CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=10000
