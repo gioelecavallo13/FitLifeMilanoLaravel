@@ -59,8 +59,8 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => [
-                    PDO::ATTR_SSL_CA => base_path('ca.pem'),
-                    PDO::ATTR_SSL_VERIFY_SERVER_CERT => false,
+                    PDO::MYSQL_ATTR_SSL_CA => base_path('ca.pem'),
+                    PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
                 ],
         ],
 
