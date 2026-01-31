@@ -25,9 +25,9 @@
                         
                         <div class="mb-3">
                             <label for="email" class="form-label text-white fw-semibold">Email</label>
-                            <input type="email" id="email" name="email" 
-                                   class="form-control bg-dark text-white border-secondary py-2 custom-input" 
-                                   placeholder="Inserisci la tua email" required>
+                            <input type="email" name="email" 
+                                    class="form-control bg-dark text-white border-secondary @error('email') is-invalid @enderror" 
+                                    value="{{ old('email') }}" required>
                         </div>
 
                         <div class="mb-3">
@@ -36,13 +36,15 @@
                                    class="form-control bg-dark text-white border-secondary py-2 custom-input" 
                                    placeholder="Inserisci la password" required>
                         </div>
-
-                        @if(isset($error))
+                        @if ($errors->any())
                             <div class="alert alert-danger py-2 small mb-3">
-                                {{ $error }}
+                                <ul class="mb-0 list-unstyled">
+                                    @foreach ($errors->all() as $error)
+                                        <li><i class="bi bi-exclamation-triangle me-2"></i>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
                             </div>
                         @endif
-
                         <button type="submit" class="btn btn-warning w-100 fw-bold py-2 mt-2 text-uppercase">Accedi</button>
                     </form>
                 </div>
