@@ -9,8 +9,7 @@ RUN apk add --no-cache \
     git \
     oniguruma-dev \
     curl-dev && \
-    docker-php-ext-install pdo_mysql bcmath gd zip
-
+    docker-php-ext-install pdo pdo_mysql bcmath gd zip
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
