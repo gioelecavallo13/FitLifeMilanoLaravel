@@ -50,6 +50,13 @@ Route::middleware(['auth'])->group(function () {
         // Dashboard principale (le 3 card)
         Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
 
+        // Sottosezione Corsi
+        Route::get('/courses/create', [AdminController::class, 'courseCreate'])->name('courses.create');
+        Route::post('/courses/store', [AdminController::class, 'courseStore'])->name('courses.store');
+        Route::get('/courses/{id}/edit', [AdminController::class, 'courseEdit'])->name('courses.edit'); 
+        Route::put('/courses/{id}', [AdminController::class, 'courseUpdate'])->name('courses.update');
+        Route::post('/courses/destroy', [AdminController::class, 'courseDestroy'])->name('courses.destroy');
+
         // Sottosezione Messaggi
         Route::get('/messaggi', [AdminController::class, 'messages'])->name('messages.index');
         Route::get('/messaggi/{id}', [AdminController::class, 'messageShow'])->name('messages.show');
@@ -62,6 +69,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/inserisci-clienti', [AdminController::class, 'createClient'])->name('clients.create');
         Route::post('/store-clienti', [AdminController::class, 'storeClient'])->name('clients.store');
 
+        //gestione utenti
         Route::get('/utenti', [AdminController::class, 'usersIndex'])->name('users.index');
         Route::get('/utenti/{id}/modifica', [AdminController::class, 'userEdit'])->name('users.edit');
         Route::put('/utenti/{id}/aggiorna', [AdminController::class, 'userUpdate'])->name('users.update');
@@ -76,6 +84,10 @@ Route::middleware(['auth'])->group(function () {
     // GRUPPO CLIENTI
     Route::middleware(['role:client'])->prefix('client')->name('client.')->group(function () {
         Route::get('/dashboard', [ClientController::class, 'index'])->name('dashboard');
+
+        //Sottosezione prenota
+        Route::get('/prenota-corsi', [ClientController::class, 'booking'])->name('booking');
+
     });
 
 });

@@ -10,4 +10,9 @@ class ClientController extends Controller
     {
         return view('client.dashboard');
     }
+
+    public function booking()
+    {
+        return view('client.booking');
+    }
 }

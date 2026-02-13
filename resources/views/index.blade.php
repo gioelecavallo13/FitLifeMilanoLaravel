@@ -138,7 +138,7 @@
 
 <section class="hero-container">
     <picture>
-        <source srcset="{{ asset('images/index/home-img-2.webp') }}" type="image/webp">
+        <source srcset="{{ asset('images/index/home-img-2.webp') }}" fetchpriority="high" loading="eager" type="image/webp">
         <img src="{{ asset('images/index/home-img-2.jpg') }}" class="hero-img" alt="FitLife Training">
     </picture>
     
