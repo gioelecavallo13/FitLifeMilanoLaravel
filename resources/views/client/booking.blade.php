@@ -1,29 +1,86 @@
 @extends('layouts.layout')
+
 @section('title', 'Prenota Corsi' . " | " . config("app.name"))
+
 @section('content')
 <div class="container py-5">
-    <div class="row justify-content-center text-center">
+    {{-- Header della pagina --}}
+    <div class="row justify-content-center text-center mb-5">
         <div class="col-lg-8">
-            <h1 class="text-white fw-bold mb-3">PRENOTAZIONE CORSI</h1>
-            <p class="text-secondary mb-4 text-white">
-                Seleziona il corso e procedi con la prenotazione.
+            <h1 class="text-white fw-bold mb-3 text-uppercase">Prenota la tua sessione</h1>
+            <p class="text-secondary mb-0">
+                Esplora le nostre attività e prenota il tuo posto. La disponibilità è limitata!
             </p>
         </div>
     </div>
 
-    <div class="row justify-content-center">
-        <div class="col-lg-6">
-            <div class="card bg-dark border-warning text-white shadow">
-                <div class="card-body py-5 text-center">
-                    <i class="bi bi-calendar-check display-4 text-warning mb-3"></i>
-                    <h4 class="mb-2">CORSI DISPONIBILI</h4>
-                    <p class="text-secondary small mb-4">
-                        Vai alla pagina corsi per scegliere la tua attività.
-                    </p>
-                    <a href="{{ route('corsi') }}" class="btn btn-warning w-100">VAI AI CORSI</a>
+    {{-- Griglia delle Card dei Corsi --}}
+    <div class="row g-4">
+        @isset($courses)
+            @forelse($courses as $course)
+                <div class="col-md-6 col-lg-4">
+                    <div class="card bg-dark border-secondary h-100 text-white shadow-lg">
+                        {{-- Badge con il Giorno --}}
+                        <div class="card-header border-secondary bg-black d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-dark fw-bold text-uppercase">
+                                {{ $course->day_of_week }}
+                            </span>
+                            <span class="small text-secondary">
+                                <i class="bi bi-clock"></i> {{ \Carbon\Carbon::parse($course->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($course->end_time)->format('H:i') }}
+                            </span>
+                        </div>
+
+                        <div class="card-body">
+                            <h4 class="card-title fw-bold text-warning mb-2">{{ $course->name }}</h4>
+                            <p class="card-text text-secondary small mb-3">
+                                {{ Str::limit($course->description, 100) }}
+                            </p>
+                            
+                            <ul class="list-unstyled mb-4">
+                                <li class="mb-2 small">
+                                    <i class="bi bi-person-badge text-info me-2"></i> Coach: 
+                                    <span class="text-white">{{ $course->coach->first_name ?? 'N/D' }} {{ $course->coach->last_name ?? '' }}</span>
+                                </li>
+                                <li class="mb-2 small">
+                                    <i class="bi bi-people text-warning me-2"></i> Posti: 
+                                    <span class="text-white">{{ $course->capacity - $course->users_count }} </span> su {{ $course->capacity }}
+                                </li>
+                                <li class="small">
+                                    <i class="bi bi-tag text-success me-2"></i> Prezzo: 
+                                    <span class="text-white">{{ number_format($course->price, 2) }} €</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="card-footer border-top-0 bg-transparent pb-4 px-4">
+                            @if(($course->capacity - $course->users_count) > 0)
+                                {{-- Form di prenotazione --}}
+                                <form action="{{ route('client.enroll', $course->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-warning w-100 fw-bold text-uppercase">
+                                        Prenota Ora
+                                    </button>
+                                </form>
+                            @else
+                                <button class="btn btn-secondary w-100 fw-bold text-uppercase disabled">
+                                    Sold Out
+                                </button>
+                            @endif
+                        </div>
+                    </div>
                 </div>
+            @empty
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-emoji-frown display-1 text-secondary"></i>
+                    <h3 class="text-white mt-3">Nessun corso disponibile al momento.</h3>
+                    <p class="text-secondary">Torna a trovarci presto!</p>
+                </div>
+            @endforelse
+        @else
+            <div class="col-12 text-center">
+                <p class="text-warning">Errore nel caricamento dei dati: variabile $courses non definita.</p>
             </div>
-        </div>
+        @endisset
     </div>
 </div>
 @endsection

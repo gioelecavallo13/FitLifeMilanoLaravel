@@ -45,9 +45,8 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->route('client.dashboard');
     })->name('dashboard.selector');
 
-    // GRUPPO AMMINISTRATORI
+    // --- GRUPPO AMMINISTRATORI ---
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
-        // Dashboard principale (le 3 card)
         Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
 
         // Sottosezione Corsi
@@ -66,28 +65,35 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/inserisci-coach', [AdminController::class, 'createCoach'])->name('coaches.create');
         Route::post('/store-coach', [AdminController::class, 'storeCoach'])->name('coaches.store');
 
+        // Gestione Clienti
         Route::get('/inserisci-clienti', [AdminController::class, 'createClient'])->name('clients.create');
         Route::post('/store-clienti', [AdminController::class, 'storeClient'])->name('clients.store');
 
-        //gestione utenti
+        // Gestione Utenti (Generale)
         Route::get('/utenti', [AdminController::class, 'usersIndex'])->name('users.index');
         Route::get('/utenti/{id}/modifica', [AdminController::class, 'userEdit'])->name('users.edit');
         Route::put('/utenti/{id}/aggiorna', [AdminController::class, 'userUpdate'])->name('users.update');
         Route::delete('/utenti/{id}/elimina', [AdminController::class, 'userDestroy'])->name('users.destroy');
     });
 
-    // GRUPPO COACH
+    // --- GRUPPO COACH ---
     Route::middleware(['role:coach'])->prefix('coach')->name('coach.')->group(function () {
         Route::get('/dashboard', [CoachController::class, 'index'])->name('dashboard');
     });
 
-    // GRUPPO CLIENTI
+    // --- GRUPPO CLIENTI ---
     Route::middleware(['role:client'])->prefix('client')->name('client.')->group(function () {
+        // Dashboard
         Route::get('/dashboard', [ClientController::class, 'index'])->name('dashboard');
 
-        //Sottosezione prenota
+        // Sezione Prenotazioni (Visualizzazione)
         Route::get('/prenota-corsi', [ClientController::class, 'booking'])->name('booking');
 
+        // Azione di Prenotazione (Iscrizione)
+        Route::post('/corsi/{courseId}/prenota', [ClientController::class, 'enroll'])->name('enroll');
+
+        // Azione di Cancellazione Prenotazione
+        Route::delete('/corsi/{courseId}/annulla', [ClientController::class, 'cancelBooking'])->name('cancel');
     });
 
 });
