@@ -8,7 +8,8 @@ RUN apk add --no-cache \
     unzip \
     git \
     oniguruma-dev \
-    curl-dev && \
+    curl-dev \
+    mariadb-dev && \
     docker-php-ext-install pdo_mysql bcmath gd zip
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
