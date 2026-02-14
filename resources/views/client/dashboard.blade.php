@@ -53,13 +53,18 @@
                                                 </span>
                                             </td>
                                             <td class="pe-4 text-end">
-                                                <form action="{{ route('client.cancel', $course->id) }}" method="POST" onsubmit="return confirm('Vuoi davvero annullare la prenotazione?')">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger px-3">
-                                                        <i class="bi bi-x-circle me-1"></i> Annulla
-                                                    </button>
-                                                </form>
+                                                <div class="d-flex gap-2 justify-content-end">
+                                                    <a href="{{ route('client.courses.show', $course->id) }}" class="btn btn-sm btn-warning">
+                                                        <i class="bi bi-eye"></i> Anagrafica corso
+                                                    </a>
+                                                    <form action="{{ route('client.cancel', $course->id) }}" method="POST" onsubmit="return confirm('Vuoi davvero annullare la prenotazione?')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger px-3">
+                                                            <i class="bi bi-x-circle me-1"></i> Annulla
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
                                     @empty

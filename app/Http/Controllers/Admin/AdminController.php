@@ -115,6 +115,12 @@ class AdminController extends Controller
         return view('admin.courses.create', compact('coaches', 'courses'));
     }
 
+    public function courseShow($id)
+    {
+        $course = Course::with(['coach', 'users'])->findOrFail($id);
+        return view('admin.courses.show', compact('course'));
+    }
+
     public function courseStore(Request $request)
     {
         $validated = $request->validate([
@@ -168,6 +174,12 @@ class AdminController extends Controller
         }
         $users = $query->latest()->get();
         return view('admin.users.index', compact('users'));
+    }
+
+    public function userShow($id)
+    {
+        $user = User::with(['courses.coach', 'createdCourses'])->findOrFail($id);
+        return view('admin.users.show', compact('user'));
     }
 
     public function userEdit($id) { return view('admin.users.edit', ['user' => User::findOrFail($id)]); }

@@ -96,6 +96,9 @@
                                         </td>
                                         <td class="pe-4 text-end">
                                             <div class="d-flex justify-content-end gap-2">
+                                                <a href="{{ route('admin.users.show', $client->id) }}" class="btn btn-sm btn-warning">
+                                                    <i class="bi bi-eye"></i> Apri
+                                                </a>
                                                 <a href="{{ route('admin.users.edit', $client->id) }}" class="btn btn-sm btn-outline-warning">
                                                     <i class="bi bi-pencil">Modifica</i>
                                                 </a>

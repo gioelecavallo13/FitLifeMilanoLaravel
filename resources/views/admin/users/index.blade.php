@@ -57,6 +57,10 @@
                     <td class="small">{{ $user->created_at->format('d/m/Y H:i') }}</td>
                     <td>
                         <div class="d-flex justify-content-center gap-2">
+                            {{-- Pulsante Apri (anagrafica utente) --}}
+                            <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-sm btn-warning">
+                                <i class="bi bi-eye"></i> Apri
+                            </a>
                             {{-- Pulsante Modifica --}}
                             <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-outline-warning">
                                 <i class="bi bi-pencil-square"></i> Modifica

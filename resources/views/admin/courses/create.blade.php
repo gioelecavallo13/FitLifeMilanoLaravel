@@ -94,6 +94,7 @@
                                     <th>Coach</th>
                                     <th>Orario</th>
                                     <th>Prezzo</th>
+                                    <th class="text-center">Iscritti</th>
                                     <th class="pe-4 text-end">Azioni</th>
                                 </tr>
                             </thead>
@@ -114,8 +115,13 @@
                                         <div class="fw-bold text-primary">{{ $course->start_time }} - {{ $course->end_time }}</div>
                                     </td>
                                     <td>{{ number_format($course->price, 2) }}€</td>
+                                    <td class="text-center">{{ $course->users_count }}</td>
                                     <td class="pe-4 text-end">
                                         <div class="d-flex justify-content-end gap-2">
+                                            {{-- Tasto Apri (dettaglio corso e prenotati) --}}
+                                            <a href="{{ route('admin.courses.show', $course->id) }}" class="btn btn-sm btn-warning">
+                                                <i class="bi bi-eye"></i> Apri
+                                            </a>
                                             {{-- Tasto Modifica (Giallo/Outline per coerenza) --}}
                                             <a href="{{ route('admin.courses.edit', $course->id) }}" class="btn btn-sm btn-outline-warning">
                                                 <i class="bi bi-pencil">Modifica</i>
@@ -134,7 +140,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="5" class="text-center py-5 text-secondary italic">
+                                    <td colspan="6" class="text-center py-5 text-secondary italic">
                                         Nessun corso creato finora.
                                     </td>
                                 </tr>

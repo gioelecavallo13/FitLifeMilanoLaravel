@@ -51,6 +51,7 @@ Route::middleware(['auth'])->group(function () {
 
         // Sottosezione Corsi
         Route::get('/courses/create', [AdminController::class, 'courseCreate'])->name('courses.create');
+        Route::get('/courses/{id}', [AdminController::class, 'courseShow'])->name('courses.show');
         Route::post('/courses/store', [AdminController::class, 'courseStore'])->name('courses.store');
         Route::get('/courses/{id}/edit', [AdminController::class, 'courseEdit'])->name('courses.edit'); 
         Route::put('/courses/{id}', [AdminController::class, 'courseUpdate'])->name('courses.update');
@@ -71,6 +72,7 @@ Route::middleware(['auth'])->group(function () {
 
         // Gestione Utenti (Generale)
         Route::get('/utenti', [AdminController::class, 'usersIndex'])->name('users.index');
+        Route::get('/utenti/{id}', [AdminController::class, 'userShow'])->name('users.show');
         Route::get('/utenti/{id}/modifica', [AdminController::class, 'userEdit'])->name('users.edit');
         Route::put('/utenti/{id}/aggiorna', [AdminController::class, 'userUpdate'])->name('users.update');
         Route::delete('/utenti/{id}/elimina', [AdminController::class, 'userDestroy'])->name('users.destroy');
@@ -88,6 +90,7 @@ Route::middleware(['auth'])->group(function () {
 
         // Sezione Prenotazioni (Visualizzazione)
         Route::get('/prenota-corsi', [ClientController::class, 'booking'])->name('booking');
+        Route::get('/corsi/{id}', [ClientController::class, 'courseShow'])->name('courses.show');
 
         // Azione di Prenotazione (Iscrizione)
         Route::post('/corsi/{courseId}/prenota', [ClientController::class, 'enroll'])->name('enroll');

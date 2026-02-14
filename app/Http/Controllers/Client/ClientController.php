@@ -26,8 +26,20 @@ class ClientController extends Controller
     {
         // Carichiamo tutti i corsi con il coach e il conteggio degli iscritti
         $courses = Course::with('coach')->withCount('users')->get();
-        
-        return view('client.booking', compact('courses'));
+        $enrolledCourseIds = Auth::user()->courses()->pluck('courses.id')->toArray();
+
+        return view('client.booking', compact('courses', 'enrolledCourseIds'));
+    }
+
+    /**
+     * Anagrafica corso per il client (dettaglio corso, senza lista altri iscritti)
+     */
+    public function courseShow($id)
+    {
+        $course = Course::with('coach')->withCount('users')->findOrFail($id);
+        $isEnrolled = Auth::user()->courses()->where('course_id', $id)->exists();
+
+        return view('client.courses.show', compact('course', 'isEnrolled'));
     }
 
     /**

@@ -4,6 +4,12 @@
 
 @section('content')
 <div class="container py-5">
+    <div class="mb-4">
+        <a href="{{ route('client.dashboard') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Torna alla Dashboard
+        </a>
+    </div>
+
     {{-- Header della pagina --}}
     <div class="row justify-content-center text-center mb-5">
         <div class="col-lg-8">
@@ -53,7 +59,21 @@
                         </div>
 
                         <div class="card-footer border-top-0 bg-transparent pb-4 px-4">
-                            @if(($course->capacity - $course->users_count) > 0)
+                            @if(in_array($course->id, $enrolledCourseIds ?? []))
+                                {{-- Cliente già iscritto: Anagrafica corso + Annulla --}}
+                                <div class="d-flex flex-column gap-2">
+                                    <a href="{{ route('client.courses.show', $course->id) }}" class="btn btn-warning w-100 fw-bold text-uppercase">
+                                        Anagrafica corso
+                                    </a>
+                                    <form action="{{ route('client.cancel', $course->id) }}" method="POST" onsubmit="return confirm('Vuoi davvero annullare la prenotazione?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-outline-danger w-100 fw-bold text-uppercase">
+                                            Annulla
+                                        </button>
+                                    </form>
+                                </div>
+                            @elseif(($course->capacity - $course->users_count) > 0)
                                 {{-- Form di prenotazione --}}
                                 <form action="{{ route('client.enroll', $course->id) }}" method="POST">
                                     @csrf
