@@ -57,7 +57,7 @@
                         <picture>
                             <source srcset="{{ asset('images/chi-siamo/' . $membro['img'] . '.webp') }}" type="image/webp">
                             <img src="{{ asset('images/chi-siamo/' . $membro['img'] . '.jpg') }}" 
-                                 alt="{{ $membro['nome'] }}" class="staff-img mx-auto mb-3" loading="lazy">
+                                 alt="{{ $membro['nome'] }}" class="staff-img mx-auto mb-3" width="140" height="140" loading="lazy" decoding="async">
                         </picture>                
                         <h2 class="h5 fw-bold text-warning">{{ $membro['nome'] }}</h2>
                         <p class="text-white mb-0">{{ $membro['ruolo'] }}</p>

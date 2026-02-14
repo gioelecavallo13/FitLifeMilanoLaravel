@@ -5,7 +5,7 @@
     <a class="navbar-brand" href="{{ route('home') }}">
       <picture>
         <source srcset="{{ asset('images/logo_white.webp') }}" type="image/webp">
-        <img id="header_logo" src="{{ asset('images/logo_white.png') }}" alt="Logo" height="90">
+        <img id="header_logo" src="{{ asset('images/logo_white.png') }}" alt="Logo" width="90" height="90" decoding="async" style="width: auto; height: 90px;">
       </picture>
     </a>
 

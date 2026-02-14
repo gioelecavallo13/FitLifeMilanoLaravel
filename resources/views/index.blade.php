@@ -3,11 +3,13 @@
 @section('title', 'Home' . " | " . config("app.name"))
 
 @push('styles')
+<link rel="preload" href="{{ asset('images/index/home-img-2.webp') }}" as="image">
 <style>
     /* --- HERO SECTION --- */
     .hero-container {
     position: relative;
     width: 100%;
+    aspect-ratio: 16 / 9;
     overflow: hidden;
     background-color: grey;
     margin: 0;
@@ -138,8 +140,8 @@
 
 <section class="hero-container">
     <picture>
-        <source srcset="{{ asset('images/index/home-img-2.webp') }}" fetchpriority="high" loading="eager" type="image/webp">
-        <img src="{{ asset('images/index/home-img-2.jpg') }}" class="hero-img" alt="FitLife Training">
+        <source srcset="{{ asset('images/index/home-img-2.webp') }}" fetchpriority="high" type="image/webp">
+        <img src="{{ asset('images/index/home-img-2.jpg') }}" class="hero-img" alt="FitLife Training" width="1920" height="1080" fetchpriority="high" loading="eager">
     </picture>
     
     <div class="hero-overlay"></div>
@@ -161,7 +163,7 @@
             <div class="col-8 col-md-6 col-lg-3">
                 <div class="testimonial-card card h-100 bg-dark text-white border-0 shadow p-4 text-center">
                     <img src="{{ asset('images/index/home-img-3.jpg') }}" 
-                         class="testimonial-img rounded-circle mx-auto mb-3" alt="Luca">
+                         class="testimonial-img rounded-circle mx-auto mb-3" alt="Luca" width="80" height="80" loading="lazy" decoding="async">
                     <div class="card-body p-0">
                         <p class="card-text fst-italic mb-3">"FitLife ha cambiato il mio modo di vedere il fitness!"</p>
                         <span class="text-warning fw-bold">- Luca</span>
@@ -172,7 +174,7 @@
             <div class="col-8 col-md-6 col-lg-3">
                 <div class="testimonial-card card h-100 bg-dark text-white border-0 shadow p-4 text-center">
                     <img src="{{ asset('images/index/home-img-4.jpg') }}" 
-                         class="testimonial-img rounded-circle mx-auto mb-3" alt="Martina">
+                         class="testimonial-img rounded-circle mx-auto mb-3" alt="Martina" width="80" height="80" loading="lazy" decoding="async">
                     <div class="card-body p-0">
                         <p class="card-text fst-italic mb-3">"Le lezioni sono divertenti e motivanti."</p>
                         <span class="text-warning fw-bold">- Martina</span>
@@ -183,7 +185,7 @@
             <div class="col-8 col-md-6 col-lg-3">
                 <div class="testimonial-card card h-100 bg-dark text-white border-0 shadow p-4 text-center">
                     <img src="{{ asset('images/index/home-img-5.jpg') }}" 
-                         class="testimonial-img rounded-circle mx-auto mb-3" alt="Giorgio">
+                         class="testimonial-img rounded-circle mx-auto mb-3" alt="Giorgio" width="80" height="80" loading="lazy" decoding="async">
                     <div class="card-body p-0">
                         <p class="card-text fst-italic mb-3">"Allenarsi qui è diventato un piacere."</p>
                         <span class="text-warning fw-bold">- Giorgio</span>

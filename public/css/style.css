@@ -15,6 +15,7 @@ body {
     .hero-container {
     position: relative;
     width: 100%;
+    aspect-ratio: 16 / 9;
     overflow: hidden;
     background-color: grey;
     margin: 0;

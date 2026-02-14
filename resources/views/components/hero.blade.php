@@ -13,8 +13,8 @@
     <picture>
         {{-- Generazione automatica del percorso WebP --}}
         <source srcset="{{ asset($imagePath . $imageName . '.webp') }}" type="image/webp">
-        {{-- Fallback JPG con la classe hero-img come richiesto --}}
-        <img src="{{ asset($imagePath . $imageName . '.jpg') }}" class="hero-img" alt="{{ $alt }}">
+        {{-- Fallback JPG con dimensioni esplicite per evitare CLS --}}
+        <img src="{{ asset($imagePath . $imageName . '.jpg') }}" class="hero-img" alt="{{ $alt }}" width="1920" height="1080" decoding="async">
     </picture>
     
     <div class="hero-overlay"></div>

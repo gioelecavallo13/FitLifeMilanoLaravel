@@ -4,6 +4,8 @@
 
 **FitLife Milano** è un'applicazione web Laravel per la gestione di un centro fitness: sito pubblico (corsi, chi siamo, contatti), area riservata con login e tre ruoli (Admin, Coach, Cliente), gestione corsi, messaggi da contatti e prenotazioni corsi da parte dei clienti.
 
+**Versione attuale:** 1.5.0
+
 ### Avvio rapido
 
 - Clonare il repository (o averlo già in locale).
@@ -207,6 +209,21 @@ Variabili attese: da controller passare `$courses` per la booking e `$myCourses`
 | Form            | `@csrf`, `@error`, `old()`, route nome in `action`. |
 | Admin           | Sottocartelle per risorsa; card scure, tabelle, pulsante "Torna alla Dashboard". |
 | Naming view     | Snake_case o kebab per file; cartelle in minuscolo (admin, coach, client, emails). |
+
+---
+
+## Storia delle versioni
+
+Le versioni seguono il [Semantic Versioning](https://semver.org/). Di seguito l’elenco delle versioni con il messaggio di commit associato (più recente in alto).
+
+| Versione | Descrizione |
+|----------|-------------|
+| 1.5.0 | Prestazioni desktop (CLS, preload LCP, cache asset, dimensioni immagini); fix proporzioni logo navbar |
+| 1.4.0 | Fix deploy Render: opzioni SSL DB condizionali (DB_SSL_CA) e mariadb-dev nel Dockerfile |
+| 1.3.0 | Anagrafica corsi e utenti, vista corso cliente, posti e annulla prenotazione; README con avvio rapido e repository |
+| 1.2.0 | Aggiunto sistema di prenotazione ai corsi |
+| 1.1.0 | Completamento sezione admin |
+| 1.0.0 | Inserimento gestione e modifica corsi, e gestione e visualizzazione utenti (versione iniziale) |
 
 ---
 

@@ -9,6 +9,8 @@
             <img src="{{ asset('images/area-riservata/area_riservata-img-2.jpg') }}" 
                  class="w-100 h-100 object-fit-cover" 
                  alt="Sfondo Area Riservata"
+                 width="1920" height="1080"
+                 decoding="async"
                  style="z-index: 1;">
         </picture>
 

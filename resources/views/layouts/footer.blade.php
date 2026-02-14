@@ -10,7 +10,8 @@
                         <img src="{{ asset('images/logo_white.png') }}" 
                              alt="FitLife logo" 
                              class="mb-3" 
-                             style="width: 140px; filter: drop-shadow(0 2px 6px #0008);">
+                             width="140" height="50"
+                             style="width: 140px; filter: drop-shadow(0 2px 6px #0008);" loading="lazy" decoding="async">
                     </picture>
                     <p class="text-secondary small lh-lg">
                         Il tuo benessere, la nostra missione.<br>
