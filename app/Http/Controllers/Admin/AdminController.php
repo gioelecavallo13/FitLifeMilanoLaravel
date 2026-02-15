@@ -71,7 +71,11 @@ class AdminController extends Controller
     public function createCoach()
     {
         $coaches = $this->getCoachesList(); // Carica i coach per la tabella a destra
-        return view('admin.coaches.create', compact('coaches'));
+        $breadcrumb = [
+            ['label' => 'Dashboard', 'url' => route('admin.dashboard')],
+            ['label' => 'Coach', 'url' => null],
+        ];
+        return view('admin.coaches.create', compact('coaches', 'breadcrumb'));
     }
 
     public function storeCoach(Request $request)
@@ -226,6 +230,18 @@ class AdminController extends Controller
                 ['label' => 'Dashboard', 'url' => route('admin.dashboard')],
                 ['label' => 'Corsi', 'url' => route('admin.courses.create')],
                 ['label' => $course ? $course->name : 'Corso', 'url' => $course ? route('admin.courses.show', $course->id) : null],
+                ['label' => $user->first_name . ' ' . $user->last_name, 'url' => null],
+            ];
+        } elseif ($from === 'coach') {
+            $breadcrumb = [
+                ['label' => 'Dashboard', 'url' => route('admin.dashboard')],
+                ['label' => 'Coach', 'url' => route('admin.coaches.create')],
+                ['label' => $user->first_name . ' ' . $user->last_name, 'url' => null],
+            ];
+        } elseif ($from === 'client') {
+            $breadcrumb = [
+                ['label' => 'Dashboard', 'url' => route('admin.dashboard')],
+                ['label' => 'Clienti', 'url' => route('admin.clients.create')],
                 ['label' => $user->first_name . ' ' . $user->last_name, 'url' => null],
             ];
         } else {

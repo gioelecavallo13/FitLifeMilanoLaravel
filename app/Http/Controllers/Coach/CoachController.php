@@ -17,7 +17,8 @@ class CoachController extends Controller
     {
         $courses = Auth::user()->createdCourses()->withCount('users')->get();
         $breadcrumb = [['label' => 'Dashboard', 'url' => null]];
-        return view('coach.dashboard', compact('courses', 'breadcrumb'));
+        $unreadMessagesCount = Auth::user()->unreadMessagesCount();
+        return view('coach.dashboard', compact('courses', 'breadcrumb', 'unreadMessagesCount'));
     }
 
     /**

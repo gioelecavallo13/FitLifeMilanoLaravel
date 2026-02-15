@@ -39,9 +39,15 @@
                             @php
                                 $other = $conv->otherParticipant(auth()->user());
                                 $lastMsg = $conv->messages->first();
+                                $unread = $conv->unread_count ?? 0;
                             @endphp
                             <tr class="table-row-chat cursor-pointer" data-href="{{ route('client.messages.show', $conv->id) }}" role="button" tabindex="0">
-                                <td class="ps-4 py-3">{{ $other->first_name }} {{ $other->last_name }}</td>
+                                <td class="ps-4 py-3">
+                                    {{ $other->first_name }} {{ $other->last_name }}
+                                    @if($unread > 0)
+                                        <span class="badge bg-danger rounded-pill ms-2" aria-label="{{ $unread }} messaggi non letti">{{ $unread }}</span>
+                                    @endif
+                                </td>
                                 <td class="py-3 text-secondary">
                                     @if($lastMsg)
                                         {{ Str::limit($lastMsg->body, 40) }}

@@ -23,6 +23,12 @@ class ConversationController extends Controller
             ->latest('updated_at')
             ->get();
 
+        $totalUnread = 0;
+        foreach ($conversations as $conv) {
+            $conv->unread_count = $conv->unreadCountFor($user->id);
+            $totalUnread += $conv->unread_count;
+        }
+
         $isCoach = $user->role === 'coach';
         $breadcrumb = $isCoach
             ? [
@@ -36,7 +42,7 @@ class ConversationController extends Controller
 
         $view = $isCoach ? 'coach.messages.index' : 'client.messages.index';
         $coaches = $isCoach ? null : User::where('role', 'coach')->orderBy('first_name')->orderBy('last_name')->get();
-        return view($view, compact('conversations', 'breadcrumb', 'coaches'));
+        return view($view, compact('conversations', 'breadcrumb', 'coaches', 'totalUnread'));
     }
 
     /**
@@ -52,6 +58,13 @@ class ConversationController extends Controller
         }
 
         $otherUser = $conversation->otherParticipant(Auth::user());
+
+        // Marca come letti i messaggi ricevuti dall'altro in questa chat
+        $conversation->messages()
+            ->where('user_id', $otherUser->id)
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
+
         $user = Auth::user();
         $isCoach = $user->role === 'coach';
 

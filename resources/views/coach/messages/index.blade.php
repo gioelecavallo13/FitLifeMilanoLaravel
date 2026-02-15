@@ -15,8 +15,7 @@
                         <tr>
                             <th class="ps-4 py-3">Cliente</th>
                             <th class="py-3">Ultimo messaggio</th>
-                            <th class="py-3">Data</th>
-                            <th class="pe-4 text-end">Azioni</th>
+                            <th class="py-3 pe-4">Data</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -24,9 +23,15 @@
                             @php
                                 $other = $conv->otherParticipant(auth()->user());
                                 $lastMsg = $conv->messages->first();
+                                $unread = $conv->unread_count ?? 0;
                             @endphp
-                            <tr>
-                                <td class="ps-4 py-3">{{ $other->first_name }} {{ $other->last_name }}</td>
+                            <tr class="table-row-chat cursor-pointer" data-href="{{ route('coach.messages.show', $conv->id) }}" role="button" tabindex="0">
+                                <td class="ps-4 py-3">
+                                    {{ $other->first_name }} {{ $other->last_name }}
+                                    @if($unread > 0)
+                                        <span class="badge bg-danger rounded-pill ms-2" aria-label="{{ $unread }} messaggi non letti">{{ $unread }}</span>
+                                    @endif
+                                </td>
                                 <td class="py-3 text-secondary">
                                     @if($lastMsg)
                                         {{ Str::limit($lastMsg->body, 40) }}
@@ -34,22 +39,17 @@
                                         —
                                     @endif
                                 </td>
-                                <td class="py-3 text-secondary small">
+                                <td class="py-3 pe-4 text-secondary small">
                                     @if($lastMsg)
                                         {{ $lastMsg->created_at->timezone('Europe/Rome')->format('d/m/Y H:i') }}
                                     @else
                                         {{ $conv->updated_at->timezone('Europe/Rome')->format('d/m/Y') }}
                                     @endif
                                 </td>
-                                <td class="pe-4 text-end">
-                                    <a href="{{ route('coach.messages.show', $conv->id) }}" class="btn btn-sm btn-warning">
-                                        <i class="bi bi-chat-dots"></i> Apri chat
-                                    </a>
-                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="text-center py-5 text-secondary">
+                                <td colspan="3" class="text-center py-5 text-secondary">
                                     <i class="bi bi-chat-dots display-6 d-block mb-2"></i>
                                     Nessuna conversazione. Apri una chat da un cliente (anagrafica o corso).
                                 </td>
@@ -61,4 +61,29 @@
         </div>
     </div>
 </div>
+
+@push('styles')
+<style>
+.table-row-chat { cursor: pointer; }
+.table-row-chat:hover { background-color: rgba(255,255,255,0.05); }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.table-row-chat[data-href]').forEach(function(row) {
+        row.addEventListener('click', function() {
+            window.location.href = this.dataset.href;
+        });
+        row.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                window.location.href = this.dataset.href;
+            }
+        });
+    });
+});
+</script>
+@endpush
 @endsection

@@ -23,7 +23,11 @@
             <div class="card bg-dark border-info text-white h-100 shadow">
                 <div class="card-body py-5">
                     <i class="bi bi-chat-dots display-4 text-info mb-3"></i>
-                    <h4 class="fw-bold">MESSAGGI</h4>
+                    <h4 class="fw-bold">MESSAGGI
+                        @if(isset($unreadMessagesCount) && $unreadMessagesCount > 0)
+                            <span class="badge bg-danger rounded-pill ms-2" aria-label="{{ $unreadMessagesCount }} messaggi non letti">{{ $unreadMessagesCount }}</span>
+                        @endif
+                    </h4>
                     <p class="text-secondary small">Scrivi ai coach dei corsi a cui sei iscritto.</p>
                     <a href="{{ route('client.messages.index') }}" class="btn btn-info w-100 mt-3 fw-bold text-uppercase">Vai ai messaggi</a>
                 </div>
@@ -43,51 +47,36 @@
                         <table class="table table-dark table-hover mb-0 align-middle">
                             <thead class="bg-black text-info text-uppercase small">
                                 <tr>
-                                    <th class="ps-4">Corso</th>
-                                    <th>Coach</th>
-                                    <th>Giorno e Orario</th>
-                                    <th class="pe-4 text-end">Azioni</th>
+                                    <th class="ps-4 py-3">Corso</th>
+                                    <th class="py-3">Coach</th>
+                                    <th class="py-3 pe-4">Giorno e Orario</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {{-- $myCourses viene passato dal metodo index() del ClientController --}}
                                 @isset($myCourses)
                                     @forelse($myCourses as $course)
-                                        <tr>
-                                            <td class="ps-4">
+                                        <tr class="table-row-chat cursor-pointer" data-href="{{ route('client.courses.show', $course->id) }}?from=dashboard" role="button" tabindex="0">
+                                            <td class="ps-4 py-3">
                                                 <div class="fw-bold text-warning">{{ $course->name }}</div>
                                             </td>
-                                            <td>{{ $course->coach->first_name ?? 'N/D' }} {{ $course->coach->last_name ?? '' }}</td>
-                                            <td>
+                                            <td class="py-3">{{ $course->coach->first_name ?? 'N/D' }} {{ $course->coach->last_name ?? '' }}</td>
+                                            <td class="py-3 pe-4">
                                                 <span class="badge bg-outline-secondary border border-secondary text-white small">
                                                     {{ $course->day_of_week }} | {{ \Carbon\Carbon::parse($course->start_time)->format('H:i') }}
                                                 </span>
                                             </td>
-                                            <td class="pe-4 text-end">
-                                                <div class="d-flex gap-2 justify-content-end flex-wrap">
-                                                    <a href="{{ route('client.courses.show', $course->id) }}" class="btn btn-sm btn-warning">
-                                                        <i class="bi bi-eye"></i> Anagrafica corso
-                                                    </a>
-                                                    <form action="{{ route('client.cancel', $course->id) }}" method="POST" onsubmit="return confirm('Vuoi davvero annullare la prenotazione?')">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger px-3">
-                                                            <i class="bi bi-x-circle me-1"></i> Annulla
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="4" class="text-center py-5 text-secondary italic">
+                                            <td colspan="3" class="text-center py-5 text-secondary italic">
                                                 Non hai ancora effettuato alcuna prenotazione.
                                             </td>
                                         </tr>
                                     @endforelse
                                 @else
                                     <tr>
-                                        <td colspan="4" class="text-center py-5 text-warning">
+                                        <td colspan="3" class="text-center py-5 text-warning">
                                             Caricamento prenotazioni...
                                         </td>
                                     </tr>
@@ -100,4 +89,29 @@
         </div>
     </div>
 </div>
+
+@push('styles')
+<style>
+.table-row-chat { cursor: pointer; }
+.table-row-chat:hover { background-color: rgba(255,255,255,0.05); }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.table-row-chat[data-href]').forEach(function(row) {
+        row.addEventListener('click', function() {
+            window.location.href = this.dataset.href;
+        });
+        row.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                window.location.href = this.dataset.href;
+            }
+        });
+    });
+});
+</script>
+@endpush
 @endsection

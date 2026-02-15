@@ -17,7 +17,8 @@ class ClientController extends Controller
         // Recuperiamo i corsi a cui l'utente è già iscritto per mostrarli in dashboard
         $myCourses = Auth::user()->courses()->with('coach')->get();
         $breadcrumb = [['label' => 'Dashboard', 'url' => null]];
-        return view('client.dashboard', compact('myCourses', 'breadcrumb'));
+        $unreadMessagesCount = Auth::user()->unreadMessagesCount();
+        return view('client.dashboard', compact('myCourses', 'breadcrumb', 'unreadMessagesCount'));
     }
 
     /**
@@ -43,11 +44,23 @@ class ClientController extends Controller
         $course = Course::with('coach')->withCount('users')->findOrFail($id);
         $isEnrolled = Auth::user()->courses()->where('course_id', $id)->exists();
         $courseLabel = strlen($course->name) > 40 ? substr($course->name, 0, 37) . '...' : $course->name;
-        $breadcrumb = [
-            ['label' => 'Dashboard', 'url' => route('client.dashboard')],
-            ['label' => 'Prenota corsi', 'url' => route('client.booking')],
-            ['label' => $courseLabel, 'url' => null],
-        ];
+        $from = request('from');
+
+        if ($from === 'dashboard') {
+            $breadcrumb = [
+                ['label' => 'Dashboard', 'url' => route('client.dashboard')],
+                ['label' => 'Le mie prenotazioni', 'url' => route('client.dashboard')],
+                ['label' => $courseLabel, 'url' => null],
+            ];
+        } else {
+            // from=booking o default: da Prenota corsi
+            $breadcrumb = [
+                ['label' => 'Dashboard', 'url' => route('client.dashboard')],
+                ['label' => 'Prenota corsi', 'url' => route('client.booking')],
+                ['label' => $courseLabel, 'url' => null],
+            ];
+        }
+
         return view('client.courses.show', compact('course', 'isEnrolled', 'breadcrumb'));
     }
 

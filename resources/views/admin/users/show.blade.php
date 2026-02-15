@@ -45,6 +45,19 @@
                         <span>{{ $user->created_at->timezone('Europe/Rome')->format('d/m/Y H:i') }}</span>
                     </div>
                 </div>
+                <div class="card-footer border-primary bg-black p-4 d-flex gap-2 flex-wrap">
+                    <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-warning fw-bold">
+                        <i class="bi bi-pencil-square"></i> Modifica dati
+                    </a>
+                    <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="d-inline"
+                          onsubmit="return confirm('Sei sicuro di voler eliminare l\'utente {{ $user->email }}? Questa azione è irreversibile.')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-outline-danger fw-bold">
+                            <i class="bi bi-trash"></i> Elimina utente
+                        </button>
+                    </form>
+                </div>
             </div>
 
             @php

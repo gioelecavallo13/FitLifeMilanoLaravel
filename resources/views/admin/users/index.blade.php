@@ -35,54 +35,58 @@
         <table class="table table-dark table-hover border-secondary align-middle">
             <thead class="table-black text-secondary">
                 <tr>
-                    <th>NOME</th>
-                    <th>COGNOME</th>
-                    <th>EMAIL</th>
-                    <th>RUOLO</th>
-                    <th>DATA REGISTRAZIONE</th>
-                    <th class="text-center">AZIONI</th>
+                    <th class="ps-4 py-3">NOME</th>
+                    <th class="py-3">COGNOME</th>
+                    <th class="py-3">EMAIL</th>
+                    <th class="py-3">RUOLO</th>
+                    <th class="py-3 pe-4">DATA REGISTRAZIONE</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($users as $user)
-                <tr>
-                    <td class="fw-bold">
-                        <a href="{{ route('admin.users.show', $user->id) }}" class="text-white text-decoration-none link-anagrafica">{{ $user->first_name }}</a>
-                    </td>
-                    <td>{{ $user->last_name }}</td>
-                    <td class="text-info">{{ $user->email }}</td>
-                    <td>
+                <tr class="table-row-chat cursor-pointer" data-href="{{ route('admin.users.show', $user->id) }}" role="button" tabindex="0">
+                    <td class="ps-4 py-3 fw-bold">{{ $user->first_name }}</td>
+                    <td class="py-3">{{ $user->last_name }}</td>
+                    <td class="py-3 text-info">{{ $user->email }}</td>
+                    <td class="py-3">
                         <span class="badge {{ $user->role == 'admin' ? 'bg-danger' : ($user->role == 'coach' ? 'bg-info text-dark' : 'bg-secondary') }}">
                             {{ strtoupper($user->role) }}
                         </span>
                     </td>
-                    <td class="small">{{ $user->created_at->format('d/m/Y H:i') }}</td>
-                    <td>
-                        <div class="d-flex justify-content-center gap-2">
-                            {{-- Pulsante Modifica --}}
-                            <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-outline-warning">
-                                <i class="bi bi-pencil-square"></i> Modifica
-                            </a>
-
-                            {{-- Form Elimina con Messaggio di Conferma --}}
-                            <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" 
-                                  onsubmit="return confirm('Sei sicuro di voler eliminare l\'utente {{ $user->email }}? Questa azione è irreversibile.')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                    <i class="bi bi-trash"></i> Elimina
-                                </button>
-                            </form>
-                        </div>
-                    </td>
+                    <td class="py-3 pe-4 small">{{ $user->created_at->format('d/m/Y H:i') }}</td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="text-center py-4 text-secondary">Nessun utente trovato con questi criteri.</td>
+                    <td colspan="5" class="text-center py-4 text-secondary">Nessun utente trovato con questi criteri.</td>
                 </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
 </div>
+
+@push('styles')
+<style>
+.table-row-chat { cursor: pointer; }
+.table-row-chat:hover { background-color: rgba(255,255,255,0.05); }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.table-row-chat[data-href]').forEach(function(row) {
+        row.addEventListener('click', function() {
+            window.location.href = this.dataset.href;
+        });
+        row.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                window.location.href = this.dataset.href;
+            }
+        });
+    });
+});
+</script>
+@endpush
 @endsection

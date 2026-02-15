@@ -19,7 +19,11 @@
             <div class="card bg-dark border-warning text-white h-100 shadow">
                 <div class="card-body py-5">
                     <i class="bi bi-envelope-paper display-4 text-warning mb-3"></i>
-                    <h4 class="fw-bold">MESSAGGI</h4>
+                    <h4 class="fw-bold">MESSAGGI
+                        @if(isset($unreadMessagesCount) && $unreadMessagesCount > 0)
+                            <span class="badge bg-danger rounded-pill ms-2" aria-label="{{ $unreadMessagesCount }} messaggi non letti">{{ $unreadMessagesCount }}</span>
+                        @endif
+                    </h4>
                     <p class="text-secondary small">Messaggistica con i clienti.</p>
                     <a href="{{ route('coach.messages.index') }}" class="btn btn-warning w-100 mt-3">APRI</a>
                 </div>

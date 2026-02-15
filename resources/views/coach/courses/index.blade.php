@@ -17,28 +17,24 @@
                             <th class="py-3">Giorno</th>
                             <th class="py-3">Orario</th>
                             <th class="py-3">Capacità</th>
-                            <th class="py-3 text-center">Iscritti</th>
-                            <th class="pe-4 py-3 text-end">Azioni</th>
+                            <th class="py-3 pe-4 text-center">Iscritti</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($courses as $course)
-                        <tr>
-                            <td class="ps-4">
-                                <a href="{{ route('coach.courses.show', $course->id) }}" class="text-white text-decoration-none link-anagrafica fw-bold text-uppercase">{{ $course->name }}</a>
+                        <tr class="table-row-chat cursor-pointer" data-href="{{ route('coach.courses.show', $course->id) }}" role="button" tabindex="0">
+                            <td class="ps-4 py-3">
+                                <span class="fw-bold text-uppercase">{{ $course->name }}</span>
                                 <div class="small text-secondary">Max {{ $course->capacity }} persone</div>
                             </td>
-                            <td>{{ $giorni[$course->day_of_week] ?? $course->day_of_week }}</td>
-                            <td>{{ \Carbon\Carbon::parse($course->start_time)->format('H:i') }} – {{ \Carbon\Carbon::parse($course->end_time)->format('H:i') }}</td>
-                            <td>{{ $course->capacity }}</td>
-                            <td class="text-center">{{ $course->users_count }}</td>
-                            <td class="pe-4 text-end">
-                                <a href="{{ route('coach.courses.show', $course->id) }}" class="btn btn-sm btn-primary"><i class="bi bi-eye"></i> Apri</a>
-                            </td>
+                            <td class="py-3">{{ $giorni[$course->day_of_week] ?? $course->day_of_week }}</td>
+                            <td class="py-3">{{ \Carbon\Carbon::parse($course->start_time)->format('H:i') }} – {{ \Carbon\Carbon::parse($course->end_time)->format('H:i') }}</td>
+                            <td class="py-3">{{ $course->capacity }}</td>
+                            <td class="py-3 pe-4 text-center">{{ $course->users_count }}</td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="text-center py-5 text-secondary italic">
+                            <td colspan="5" class="text-center py-5 text-secondary italic">
                                 Nessun corso creato.
                             </td>
                         </tr>
@@ -49,4 +45,29 @@
         </div>
     </div>
 </div>
+
+@push('styles')
+<style>
+.table-row-chat { cursor: pointer; }
+.table-row-chat:hover { background-color: rgba(255,255,255,0.05); }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.table-row-chat[data-href]').forEach(function(row) {
+        row.addEventListener('click', function() {
+            window.location.href = this.dataset.href;
+        });
+        row.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                window.location.href = this.dataset.href;
+            }
+        });
+    });
+});
+</script>
+@endpush
 @endsection

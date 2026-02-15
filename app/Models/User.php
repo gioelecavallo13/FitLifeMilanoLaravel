@@ -88,4 +88,18 @@ class User extends Authenticatable
     {
         return $this->hasMany(Conversation::class, 'client_id');
     }
+
+    /**
+     * Totale messaggi non letti per questo utente (in tutte le sue conversazioni).
+     */
+    public function unreadMessagesCount(): int
+    {
+        $conversationIds = Conversation::where('coach_id', $this->id)
+            ->orWhere('client_id', $this->id)
+            ->pluck('id');
+
+        return Message::whereIn('conversation_id', $conversationIds)
+            ->unreadBy($this->id)
+            ->count();
+    }
 }

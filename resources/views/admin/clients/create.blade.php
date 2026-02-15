@@ -73,52 +73,35 @@
                         <table class="table table-dark table-hover mb-0 align-middle">
                             <thead class="bg-black text-primary text-uppercase small">
                                 <tr>
-                                    <th class="ps-4">Cliente</th>
-                                    <th>Email</th>
-                                    <th>Data Reg.</th>
-                                    <th class="pe-4 text-end">Azioni</th>
+                                    <th class="ps-4 py-3">Cliente</th>
+                                    <th class="py-3">Email</th>
+                                    <th class="py-3 pe-4">Data Reg.</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {{-- NOTA: Assicurati che $clients sia passato dal controller --}}
                                 @isset($clients)
                                     @forelse($clients as $client)
-                                    <tr>
-                                        <td class="ps-4">
-                                            <div class="fw-bold">
-                                                <a href="{{ route('admin.users.show', $client->id) }}" class="text-white text-decoration-none link-anagrafica">{{ $client->first_name }} {{ $client->last_name }}</a>
-                                            </div>
+                                    <tr class="table-row-chat cursor-pointer" data-href="{{ route('admin.users.show', $client->id) }}?from=client" role="button" tabindex="0">
+                                        <td class="ps-4 py-3">
+                                            <div class="fw-bold">{{ $client->first_name }} {{ $client->last_name }}</div>
                                             <span class="badge bg-outline-info border border-info text-info" style="font-size: 0.65rem;">CLIENTE</span>
                                         </td>
-                                        <td>{{ $client->email }}</td>
-                                        <td class="small text-secondary">
+                                        <td class="py-3">{{ $client->email }}</td>
+                                        <td class="py-3 pe-4 small text-secondary">
                                             {{ $client->created_at->format('d/m/Y') }}
-                                        </td>
-                                        <td class="pe-4 text-end">
-                                            <div class="d-flex justify-content-end gap-2">
-                                                <a href="{{ route('admin.users.edit', $client->id) }}" class="btn btn-sm btn-outline-warning">
-                                                    <i class="bi bi-pencil">Modifica</i>
-                                                </a>
-                                                <form action="{{ route('admin.users.destroy', $client->id) }}" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare questo cliente?')">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="btn btn-sm btn-outline-danger">
-                                                        <i class="bi bi-trash">Elimina</i>
-                                                    </button>
-                                                </form>
-                                            </div>
                                         </td>
                                     </tr>
                                     @empty
                                     <tr>
-                                        <td colspan="4" class="text-center py-5 text-secondary italic">
+                                        <td colspan="3" class="text-center py-5 text-secondary italic">
                                             Nessun cliente presente nel database.
                                         </td>
                                     </tr>
                                     @endforelse
                                 @else
                                     <tr>
-                                        <td colspan="4" class="text-center py-5 text-warning">
+                                        <td colspan="3" class="text-center py-5 text-warning">
                                             Caricamento lista... (Verifica variabile $clients nel controller)
                                         </td>
                                     </tr>
@@ -131,4 +114,29 @@
         </div>
     </div>
 </div>
+
+@push('styles')
+<style>
+.table-row-chat { cursor: pointer; }
+.table-row-chat:hover { background-color: rgba(255,255,255,0.05); }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.table-row-chat[data-href]').forEach(function(row) {
+        row.addEventListener('click', function() {
+            window.location.href = this.dataset.href;
+        });
+        row.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                window.location.href = this.dataset.href;
+            }
+        });
+    });
+});
+</script>
+@endpush
 @endsection

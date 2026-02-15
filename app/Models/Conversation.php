@@ -25,6 +25,15 @@ class Conversation extends Model
         return $this->hasMany(Message::class)->latest();
     }
 
+    /**
+     * Numero di messaggi non letti in questa conversazione per l'utente $userId
+     * (messaggi inviati dall'altro partecipante con read_at null).
+     */
+    public function unreadCountFor($userId): int
+    {
+        return $this->messages()->unreadBy($userId)->count();
+    }
+
     public function isParticipant($user): bool
     {
         return (int) $user->id === (int) $this->coach_id || (int) $user->id === (int) $this->client_id;

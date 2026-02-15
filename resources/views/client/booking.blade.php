@@ -57,7 +57,7 @@
                             @if(in_array($course->id, $enrolledCourseIds ?? []))
                                 {{-- Cliente già iscritto: Anagrafica corso + Annulla --}}
                                 <div class="d-flex flex-column gap-2">
-                                    <a href="{{ route('client.courses.show', $course->id) }}" class="btn btn-warning w-100 fw-bold text-uppercase">
+                                    <a href="{{ route('client.courses.show', $course->id) }}?from=booking" class="btn btn-warning w-100 fw-bold text-uppercase">
                                         Anagrafica corso
                                     </a>
                                     <form action="{{ route('client.cancel', $course->id) }}" method="POST" onsubmit="return confirm('Vuoi davvero annullare la prenotazione?')">
