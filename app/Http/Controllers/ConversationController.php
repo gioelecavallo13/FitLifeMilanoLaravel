@@ -98,7 +98,7 @@ class ConversationController extends Controller
      */
     public function markAsRead($id)
     {
-        $conversation = Conversation::findOrFail($id);
+        $conversation = Conversation::with(['coach', 'client'])->findOrFail($id);
         if (! $conversation->isParticipant(Auth::user())) {
             abort(403);
         }
@@ -129,16 +129,16 @@ class ConversationController extends Controller
             'user_id' => Auth::id(),
             'body' => $request->input('body'),
         ]);
-        $message->load(['user', 'conversation']);
+        $senderName = Auth::user()->first_name . ' ' . Auth::user()->last_name;
 
-        broadcast(new MessageSent($message))->toOthers();
+        broadcast(new MessageSent($message, $senderName))->toOthers();
 
         if ($request->wantsJson()) {
             return response()->json([
                 'id' => $message->id,
                 'body' => $message->body,
                 'user_id' => $message->user_id,
-                'sender_name' => $message->user->first_name . ' ' . $message->user->last_name,
+                'sender_name' => $senderName,
                 'created_at' => $message->created_at->toIso8601String(),
             ]);
         }

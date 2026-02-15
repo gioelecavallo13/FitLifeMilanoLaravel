@@ -87,7 +87,7 @@ class AdminConversationController extends Controller
      */
     public function markAsRead($id)
     {
-        $conversation = Conversation::findOrFail($id);
+        $conversation = Conversation::with('otherUser')->findOrFail($id);
         if (! $conversation->isParticipant(Auth::user())) {
             abort(403);
         }
@@ -111,7 +111,7 @@ class AdminConversationController extends Controller
             'body' => 'required|string|max:5000',
         ]);
 
-        $conversation = Conversation::findOrFail($id);
+        $conversation = Conversation::with('otherUser')->findOrFail($id);
         if (! $conversation->isParticipant(Auth::user())) {
             abort(403);
         }
@@ -120,21 +120,23 @@ class AdminConversationController extends Controller
             'user_id' => Auth::id(),
             'body' => $request->input('body'),
         ]);
-        $message->load(['user', 'conversation']);
+        $message->setRelation('user', Auth::user());
+        $message->setRelation('conversation', $conversation);
 
         $recipient = $conversation->otherParticipant(Auth::user());
         if ($recipient && $recipient->role === 'admin') {
             Cache::forget('admin.unread_chat_count.' . $recipient->id);
         }
 
-        broadcast(new MessageSent($message))->toOthers();
+        $senderName = Auth::user()->first_name . ' ' . Auth::user()->last_name;
+        broadcast(new MessageSent($message, $senderName))->toOthers();
 
         if ($request->wantsJson()) {
             return response()->json([
                 'id' => $message->id,
                 'body' => $message->body,
                 'user_id' => $message->user_id,
-                'sender_name' => $message->user->first_name . ' ' . $message->user->last_name,
+                'sender_name' => $senderName,
                 'created_at' => $message->created_at->toIso8601String(),
             ]);
         }

@@ -14,10 +14,15 @@ class MessageSent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    /**
+     * @param  Message  $message
+     * @param  string  $senderName  Nome completo mittente (evita query duplicate quando il job broadcast viene eseguito)
+     */
     public function __construct(
-        public Message $message
+        public Message $message,
+        public string $senderName
     ) {
-        $this->message->load(['user', 'conversation']);
+        //
     }
 
     public function broadcastOn(): array
@@ -27,13 +32,18 @@ class MessageSent implements ShouldBroadcast
         ];
     }
 
+    public function broadcastQueue(): string
+    {
+        return 'broadcasts';
+    }
+
     public function broadcastWith(): array
     {
         return [
             'id' => $this->message->id,
             'body' => $this->message->body,
             'user_id' => $this->message->user_id,
-            'sender_name' => $this->message->user->first_name . ' ' . $this->message->user->last_name,
+            'sender_name' => $this->senderName,
             'conversation_id' => $this->message->conversation_id,
             'created_at' => $this->message->created_at->toIso8601String(),
         ];

@@ -22,6 +22,14 @@
 - `APP_DEBUG=false`
 - `APP_ENV=production`
 - `SESSION_DRIVER=file` (più veloce; usare `database` o `redis` solo per multi-server)
+- `CACHE_STORE=file` (più veloce; `redis` in produzione se disponibile)
+- `QUEUE_CONNECTION=database` (broadcast messaggi in coda)
+
+**Queue worker (obbligatorio per chat in tempo reale):**
+```bash
+php artisan queue:work --queue=broadcasts,default
+```
+In produzione usare Supervisor per tenere il worker attivo.
 
 **Cache artefact (eseguire dopo ogni deploy o modifica a config/route/view):**
 ```bash
