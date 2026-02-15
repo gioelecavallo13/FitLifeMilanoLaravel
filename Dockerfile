@@ -24,11 +24,8 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --no-script
 # Permessi: assicurati che www-data possa leggere il certificato
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/ca.pem
 
+RUN chmod +x docker-entrypoint.sh
+
 EXPOSE 10000
 
-# Usa config:clear invece di config:cache per forzare la lettura delle variabili di Render
-CMD php artisan config:clear && \
-    php artisan cache:clear && \
-    php artisan storage:link && \
-    php artisan migrate --force && \
-    php artisan serve --host=0.0.0.0 --port=10000
+CMD ["./docker-entrypoint.sh"]
