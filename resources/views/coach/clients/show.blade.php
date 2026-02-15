@@ -39,6 +39,10 @@
                         <label class="text-secondary small text-uppercase fw-bold d-block">Data registrazione</label>
                         <span>{{ $user->created_at->timezone('Europe/Rome')->format('d/m/Y H:i') }}</span>
                     </div>
+                    <hr class="border-secondary my-3">
+                    <a href="{{ route('coach.messages.startWithClient', $user->id) }}" class="btn btn-warning">
+                        <i class="bi bi-chat-dots me-1"></i> Invia messaggio
+                    </a>
                 </div>
             </div>
         </div>

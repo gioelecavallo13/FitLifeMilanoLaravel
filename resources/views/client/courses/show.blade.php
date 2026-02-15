@@ -55,13 +55,18 @@
 
                     @if($isEnrolled)
                         <hr class="border-secondary my-4">
-                        <form action="{{ route('client.cancel', $course->id) }}" method="POST" onsubmit="return confirm('Vuoi davvero annullare la prenotazione?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-outline-danger fw-bold text-uppercase">
-                                <i class="bi bi-x-circle me-1"></i> Annulla prenotazione
-                            </button>
-                        </form>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a href="{{ route('client.messages.startWithCoach', $course->user_id) }}" class="btn btn-info fw-bold text-uppercase">
+                                <i class="bi bi-chat-dots me-1"></i> Messaggio al coach
+                            </a>
+                            <form action="{{ route('client.cancel', $course->id) }}" method="POST" onsubmit="return confirm('Vuoi davvero annullare la prenotazione?')" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-outline-danger fw-bold text-uppercase">
+                                    <i class="bi bi-x-circle me-1"></i> Annulla prenotazione
+                                </button>
+                            </form>
+                        </div>
                     @endif
                 </div>
             </div>

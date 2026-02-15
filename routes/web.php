@@ -5,6 +5,7 @@ use App\Http\Controllers\ContactRequestController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Coach\CoachController;
 use App\Http\Controllers\Client\ClientController;
+use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\AuthController;
 
 /*
@@ -84,7 +85,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/corsi', [CoachController::class, 'coursesIndex'])->name('courses.index');
         Route::get('/corsi/{id}', [CoachController::class, 'courseShow'])->name('courses.show');
         Route::get('/clienti/{id}', [CoachController::class, 'clientShow'])->name('clients.show');
-        Route::get('/messaggi', [CoachController::class, 'messages'])->name('messages.index');
+        Route::get('/messaggi', [ConversationController::class, 'index'])->name('messages.index');
+        Route::get('/messaggi/conversazione/{id}', [ConversationController::class, 'show'])->name('messages.show');
+        Route::post('/messaggi/conversazione/{id}', [ConversationController::class, 'storeMessage'])->name('messages.send');
+        Route::get('/messaggi/conversazione/con-client/{clientId}', [ConversationController::class, 'startWithClient'])->name('messages.startWithClient');
     });
 
     // --- GRUPPO CLIENTI ---
@@ -101,6 +105,12 @@ Route::middleware(['auth'])->group(function () {
 
         // Azione di Cancellazione Prenotazione
         Route::delete('/corsi/{courseId}/annulla', [ClientController::class, 'cancelBooking'])->name('cancel');
+
+        // Messaggistica con i coach
+        Route::get('/messaggi', [ConversationController::class, 'index'])->name('messages.index');
+        Route::get('/messaggi/conversazione/{id}', [ConversationController::class, 'show'])->name('messages.show');
+        Route::post('/messaggi/conversazione/{id}', [ConversationController::class, 'storeMessage'])->name('messages.send');
+        Route::get('/messaggi/conversazione/con-coach/{coachId}', [ConversationController::class, 'startWithCoach'])->name('messages.startWithCoach');
     });
 
 });

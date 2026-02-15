@@ -68,7 +68,8 @@
                                     <th class="ps-4 py-3">Nome</th>
                                     <th class="py-3">Cognome</th>
                                     <th class="py-3">Email</th>
-                                    <th class="pe-4 py-3">Data prenotazione</th>
+                                    <th class="py-3">Data prenotazione</th>
+                                    <th class="pe-4 text-end py-3">Azioni</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -81,13 +82,16 @@
                                     <td>
                                         <a href="mailto:{{ $user->email }}" class="text-warning text-decoration-none">{{ $user->email }}</a>
                                     </td>
-                                    <td class="pe-4 text-secondary small">
+                                    <td class="text-secondary small">
                                         {{ $user->pivot->created_at ? $user->pivot->created_at->timezone('Europe/Rome')->format('d/m/Y H:i') : '—' }}
+                                    </td>
+                                    <td class="pe-4 text-end">
+                                        <a href="{{ route('coach.messages.startWithClient', $user->id) }}" class="btn btn-sm btn-warning"><i class="bi bi-chat-dots me-1"></i> Messaggio</a>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="4" class="text-center py-5 text-secondary italic">
+                                    <td colspan="5" class="text-center py-5 text-secondary italic">
                                         Nessun utente prenotato per questo corso.
                                     </td>
                                 </tr>

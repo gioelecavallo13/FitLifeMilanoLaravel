@@ -72,4 +72,20 @@ class User extends Authenticatable
     {
         return $this->hasMany(Course::class, 'user_id');
     }
+
+    /**
+     * Conversazioni in cui l'utente è il coach
+     */
+    public function conversationsAsCoach(): HasMany
+    {
+        return $this->hasMany(Conversation::class, 'coach_id');
+    }
+
+    /**
+     * Conversazioni in cui l'utente è il client
+     */
+    public function conversationsAsClient(): HasMany
+    {
+        return $this->hasMany(Conversation::class, 'client_id');
+    }
 }

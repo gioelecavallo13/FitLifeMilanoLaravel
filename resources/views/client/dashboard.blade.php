@@ -9,13 +9,23 @@
 
     {{-- Azioni Rapide --}}
     <div class="row g-4 text-center mb-5">
-        <div class="col-md-4 offset-md-4">
+        <div class="col-md-4">
             <div class="card bg-dark border-warning text-white h-100 shadow">
                 <div class="card-body py-5">
                     <i class="bi bi-calendar-plus display-4 text-warning mb-3"></i>
                     <h4 class="fw-bold">PRENOTA NUOVO CORSO</h4>
                     <p class="text-secondary small">Scegli tra le attività disponibili e assicurati il tuo posto.</p>
                     <a href="{{ route('client.booking') }}" class="btn btn-warning w-100 mt-3 fw-bold text-uppercase">Vedi Corsi</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-dark border-info text-white h-100 shadow">
+                <div class="card-body py-5">
+                    <i class="bi bi-chat-dots display-4 text-info mb-3"></i>
+                    <h4 class="fw-bold">MESSAGGI</h4>
+                    <p class="text-secondary small">Scrivi ai coach dei corsi a cui sei iscritto.</p>
+                    <a href="{{ route('client.messages.index') }}" class="btn btn-info w-100 mt-3 fw-bold text-uppercase">Vai ai messaggi</a>
                 </div>
             </div>
         </div>
@@ -54,7 +64,7 @@
                                                 </span>
                                             </td>
                                             <td class="pe-4 text-end">
-                                                <div class="d-flex gap-2 justify-content-end">
+                                                <div class="d-flex gap-2 justify-content-end flex-wrap">
                                                     <a href="{{ route('client.courses.show', $course->id) }}" class="btn btn-sm btn-warning">
                                                         <i class="bi bi-eye"></i> Anagrafica corso
                                                     </a>
