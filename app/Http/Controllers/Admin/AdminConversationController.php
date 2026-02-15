@@ -74,7 +74,26 @@ class AdminConversationController extends Controller
             'otherUser' => $otherUser,
             'breadcrumb' => $breadcrumb,
             'sendMessageRoute' => 'admin.chat.send',
+            'routeMarkRead' => 'admin.chat.markRead',
         ]);
+    }
+
+    /**
+     * Segna come letti i messaggi ricevuti dall'altro in questa conversazione (chiamata da AJAX quando si riceve un messaggio via Echo).
+     */
+    public function markAsRead($id)
+    {
+        $conversation = Conversation::findOrFail($id);
+        if (! $conversation->isParticipant(Auth::user())) {
+            abort(403);
+        }
+        $otherUser = $conversation->otherParticipant(Auth::user());
+        $conversation->messages()
+            ->where('user_id', $otherUser->id)
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
+
+        return response()->json(['ok' => true], 200);
     }
 
     /**

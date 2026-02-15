@@ -69,6 +69,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/chat', [AdminConversationController::class, 'index'])->name('chat.index');
         Route::get('/chat/conversazione/{id}', [AdminConversationController::class, 'show'])->name('chat.show');
         Route::post('/chat/conversazione/{id}', [AdminConversationController::class, 'storeMessage'])->name('chat.send');
+        Route::post('/chat/conversazione/{id}/segna-letti', [AdminConversationController::class, 'markAsRead'])->name('chat.markRead');
         Route::get('/chat/conversazione/con-utente/{userId}', [AdminConversationController::class, 'startWithUser'])->name('chat.startWithUser');
 
         // Gestione Coach
@@ -96,6 +97,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/messaggi', [ConversationController::class, 'index'])->name('messages.index');
         Route::get('/messaggi/conversazione/{id}', [ConversationController::class, 'show'])->name('messages.show');
         Route::post('/messaggi/conversazione/{id}', [ConversationController::class, 'storeMessage'])->name('messages.send');
+        Route::post('/messaggi/conversazione/{id}/segna-letti', [ConversationController::class, 'markAsRead'])->name('messages.markRead');
         Route::get('/messaggi/conversazione/con-client/{clientId}', [ConversationController::class, 'startWithClient'])->name('messages.startWithClient');
         Route::get('/messaggi/conversazione/con-coach-collega/{coachId}', [ConversationController::class, 'startWithCoachColleague'])->name('messages.startWithCoachColleague');
     });
@@ -119,6 +121,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/messaggi', [ConversationController::class, 'index'])->name('messages.index');
         Route::get('/messaggi/conversazione/{id}', [ConversationController::class, 'show'])->name('messages.show');
         Route::post('/messaggi/conversazione/{id}', [ConversationController::class, 'storeMessage'])->name('messages.send');
+        Route::post('/messaggi/conversazione/{id}/segna-letti', [ConversationController::class, 'markAsRead'])->name('messages.markRead');
         Route::get('/messaggi/conversazione/con-coach/{coachId}', [ConversationController::class, 'startWithCoach'])->name('messages.startWithCoach');
     });
 

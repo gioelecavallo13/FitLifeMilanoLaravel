@@ -100,6 +100,7 @@ class User extends Authenticatable
     /**
      * Totale messaggi non letti per questo utente (in tutte le sue conversazioni).
      * Include conversazioni coach-client e conversazioni admin-utente (admin o other_user).
+     * Query unica con subquery per evitare due round-trip al DB.
      */
     public function unreadMessagesCount(): int
     {
@@ -107,7 +108,7 @@ class User extends Authenticatable
             ->orWhere('client_id', $this->id)
             ->orWhere('admin_id', $this->id)
             ->orWhere('other_user_id', $this->id)
-            ->pluck('id');
+            ->select('id');
 
         return Message::whereIn('conversation_id', $conversationIds)
             ->unreadBy($this->id)

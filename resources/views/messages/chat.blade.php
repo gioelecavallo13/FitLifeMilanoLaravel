@@ -43,6 +43,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     var conversationId = {{ $conversation->id }};
     var sendRoute = "{{ route($sendMessageRoute, $conversation->id) }}";
+    var markReadRoute = "{{ route($routeMarkRead ?? 'coach.messages.markRead', $conversation->id) }}";
     var currentUserId = {{ auth()->id() }};
     var currentUserName = "{{ addslashes(auth()->user()->first_name . ' ' . auth()->user()->last_name) }}";
 
@@ -50,6 +51,10 @@ document.addEventListener('DOMContentLoaded', function() {
     var bodyInput = document.getElementById('chat-body');
     var submitBtn = document.getElementById('chat-submit');
     var messagesContainer = document.getElementById('chat-messages');
+
+    requestAnimationFrame(function() {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    });
 
     form.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -91,6 +96,8 @@ document.addEventListener('DOMContentLoaded', function() {
         Echo.private('conversation.' + conversationId).listen('.MessageSent', function(e) {
             if (e.user_id !== currentUserId) {
                 appendMessage(e.id, e.body, e.user_id, e.sender_name, e.created_at);
+                var csrf = document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : '';
+                fetch(markReadRoute, { method: 'POST', headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf } });
             }
         });
     }

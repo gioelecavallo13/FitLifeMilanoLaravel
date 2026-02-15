@@ -16,6 +16,16 @@
 - `php artisan migrate`
 - `php artisan serve` e aprire l’URL indicato nel terminale.
 
+### Produzione e performance
+
+In produzione eseguire dopo il deploy (o dopo aver modificato config/route/view):
+
+- `php artisan config:cache`
+- `php artisan route:cache`
+- `php artisan view:cache`
+
+Impostare in `.env`: `APP_DEBUG=false`, `APP_ENV=production`. Per ridurre la lentezza delle sessioni si può usare `SESSION_DRIVER=database` o `redis` (se disponibile) al posto di `file`.
+
 ### Repository e sviluppo
 
 - **Repository:** [https://github.com/gioelecavallo13/FitLifeMilanoLaravel.git](https://github.com/gioelecavallo13/FitLifeMilanoLaravel.git)
