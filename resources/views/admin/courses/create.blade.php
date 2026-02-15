@@ -124,6 +124,11 @@
                             </tbody>
                         </table>
                     </div>
+                    @if($courses->hasPages())
+                        <div class="d-flex justify-content-center p-3">
+                            {{ $courses->links() }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

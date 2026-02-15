@@ -109,6 +109,11 @@
                             </tbody>
                         </table>
                     </div>
+                    @if($clients->hasPages())
+                        <div class="d-flex justify-content-center p-3">
+                            {{ $clients->links() }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

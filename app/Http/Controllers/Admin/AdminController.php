@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 
@@ -15,16 +16,16 @@ class AdminController extends Controller
 {
     public function index()
     {
-        $newMessagesCount = ContactRequest::where('status', 'new')->count();
-        $unreadChatCount = Auth::user()->unreadMessagesCount();
+        $newMessagesCount = Cache::remember('admin.new_messages_count', now()->addMinutes(2), fn () => ContactRequest::where('status', 'new')->count());
+        $unreadChatCount = Cache::remember('admin.unread_chat_count.' . Auth::id(), now()->addMinutes(1), fn () => Auth::user()->unreadMessagesCount());
         $breadcrumb = [['label' => 'Dashboard', 'url' => null]];
         return view('admin.dashboard', compact('newMessagesCount', 'unreadChatCount', 'breadcrumb'));
     }
 
     /* --- FUNZIONI DI RECUPERO DATI (Interne) --- */
-    private function getClientsList() { return User::where('role', 'client')->latest()->get(); }
-    private function getCoachesList() { return User::where('role', 'coach')->latest()->get(); }
-    private function getCoursesList() { return Course::with('coach')->withCount('users')->latest()->get(); }
+    private function getClientsList() { return User::where('role', 'client')->latest()->paginate(15); }
+    private function getCoachesList() { return User::where('role', 'coach')->latest()->paginate(15); }
+    private function getCoursesList() { return Course::with('coach')->withCount('users')->latest()->paginate(15); }
 
     /* --- GESTIONE MESSAGGI --- */
     public function messages(Request $request)
@@ -32,7 +33,7 @@ class AdminController extends Controller
         $query = ContactRequest::query();
         if ($request->filled('email')) $query->where('email', 'like', '%' . $request->email . '%');
         if ($request->filled('status')) $query->where('status', $request->status);
-        $requests = $query->latest()->get();
+        $requests = $query->latest()->paginate(15)->withQueryString();
         $breadcrumb = [
             ['label' => 'Dashboard', 'url' => route('admin.dashboard')],
             ['label' => 'Messaggi', 'url' => null],
@@ -43,7 +44,10 @@ class AdminController extends Controller
     public function messageShow($id)
     {
         $message = ContactRequest::findOrFail($id);
-        if ($message->status === 'new') $message->update(['status' => 'read']);
+        if ($message->status === 'new') {
+            $message->update(['status' => 'read']);
+            Cache::forget('admin.new_messages_count');
+        }
         $subject = strlen($message->subject) > 40 ? substr($message->subject, 0, 37) . '...' : $message->subject;
         $breadcrumb = [
             ['label' => 'Dashboard', 'url' => route('admin.dashboard')],
@@ -58,6 +62,7 @@ class AdminController extends Controller
         $request->validate(['reply_text' => 'required|min:5']);
         $message = ContactRequest::findOrFail($id);
         $message->update(['status' => 'replied']);
+        Cache::forget('admin.new_messages_count');
         try {
             $emailData = ['subject' => $message->subject, 'replyText' => $request->reply_text, 'first_name' => $message->first_name];
             Mail::send('emails.contact-response', $emailData, function($mail) use ($message) {
@@ -135,7 +140,7 @@ class AdminController extends Controller
     /* --- GESTIONE CORSI --- */
     public function courseCreate()
     {
-        $coaches = User::where('role', 'coach')->get();
+        $coaches = User::where('role', 'coach')->orderBy('first_name')->orderBy('last_name')->get();
         $courses = $this->getCoursesList();
         $breadcrumb = [
             ['label' => 'Dashboard', 'url' => route('admin.dashboard')],
@@ -219,7 +224,7 @@ class AdminController extends Controller
                   ->orWhere('email', 'like', "%{$search}%");
             });
         }
-        $users = $query->latest()->get();
+        $users = $query->latest()->paginate(15)->withQueryString();
         $breadcrumb = [
             ['label' => 'Dashboard', 'url' => route('admin.dashboard')],
             ['label' => 'Lista utenti', 'url' => null],

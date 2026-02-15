@@ -9,6 +9,7 @@ use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class AdminConversationController extends Controller
 {
@@ -23,9 +24,10 @@ class AdminConversationController extends Controller
             ->latest('updated_at')
             ->get();
 
+        $unreadMap = Message::unreadCountsByConversation($conversations->pluck('id')->toArray(), (int) $admin->id);
         $totalUnread = 0;
         foreach ($conversations as $conv) {
-            $conv->unread_count = $conv->unreadCountFor($admin->id);
+            $conv->unread_count = (int) ($unreadMap[$conv->id] ?? 0);
             $totalUnread += $conv->unread_count;
         }
 
@@ -63,6 +65,8 @@ class AdminConversationController extends Controller
             ->whereNull('read_at')
             ->update(['read_at' => now()]);
 
+        Cache::forget('admin.unread_chat_count.' . Auth::id());
+
         $breadcrumb = [
             ['label' => 'Dashboard', 'url' => route('admin.dashboard')],
             ['label' => 'Chat', 'url' => route('admin.chat.index')],
@@ -93,6 +97,8 @@ class AdminConversationController extends Controller
             ->whereNull('read_at')
             ->update(['read_at' => now()]);
 
+        Cache::forget('admin.unread_chat_count.' . Auth::id());
+
         return response()->json(['ok' => true], 200);
     }
 
@@ -115,6 +121,11 @@ class AdminConversationController extends Controller
             'body' => $request->input('body'),
         ]);
         $message->load(['user', 'conversation']);
+
+        $recipient = $conversation->otherParticipant(Auth::user());
+        if ($recipient && $recipient->role === 'admin') {
+            Cache::forget('admin.unread_chat_count.' . $recipient->id);
+        }
 
         broadcast(new MessageSent($message))->toOthers();
 

@@ -80,6 +80,11 @@
             </div>
         </div>
     </div>
+    @if($requests->hasPages())
+        <div class="d-flex justify-content-center mt-4">
+            {{ $requests->links() }}
+        </div>
+    @endif
 </div>
 
 @push('styles')

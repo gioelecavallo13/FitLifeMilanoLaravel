@@ -108,6 +108,11 @@
                             </tbody>
                         </table>
                     </div>
+                    @if($coaches->hasPages())
+                        <div class="d-flex justify-content-center p-3">
+                            {{ $coaches->links() }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

@@ -26,8 +26,8 @@ class ClientController extends Controller
      */
     public function booking()
     {
-        // Carichiamo tutti i corsi con il coach e il conteggio degli iscritti
-        $courses = Course::with('coach')->withCount('users')->get();
+        // Carichiamo i corsi con il coach e il conteggio degli iscritti (paginato)
+        $courses = Course::with('coach')->withCount('users')->paginate(12)->withQueryString();
         $enrolledCourseIds = Auth::user()->courses()->pluck('courses.id')->toArray();
         $breadcrumb = [
             ['label' => 'Dashboard', 'url' => route('client.dashboard')],

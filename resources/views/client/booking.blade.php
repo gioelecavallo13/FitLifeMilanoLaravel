@@ -97,5 +97,12 @@
             </div>
         @endisset
     </div>
+    @isset($courses)
+        @if($courses->hasPages())
+            <div class="d-flex justify-content-center mt-4">
+                {{ $courses->links() }}
+            </div>
+        @endif
+    @endisset
 </div>
 @endsection

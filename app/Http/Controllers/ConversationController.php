@@ -24,9 +24,10 @@ class ConversationController extends Controller
             ->latest('updated_at')
             ->get();
 
+        $unreadMap = Message::unreadCountsByConversation($conversations->pluck('id')->toArray(), (int) $user->id);
         $totalUnread = 0;
         foreach ($conversations as $conv) {
-            $conv->unread_count = $conv->unreadCountFor($user->id);
+            $conv->unread_count = (int) ($unreadMap[$conv->id] ?? 0);
             $totalUnread += $conv->unread_count;
         }
 

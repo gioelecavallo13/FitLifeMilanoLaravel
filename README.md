@@ -18,13 +18,19 @@
 
 ### Produzione e performance
 
-In produzione eseguire dopo il deploy (o dopo aver modificato config/route/view):
+**Variabili `.env` obbligatorie:**
+- `APP_DEBUG=false`
+- `APP_ENV=production`
+- `SESSION_DRIVER=file` (più veloce; usare `database` o `redis` solo per multi-server)
 
-- `php artisan config:cache`
-- `php artisan route:cache`
-- `php artisan view:cache`
+**Cache artefact (eseguire dopo ogni deploy o modifica a config/route/view):**
+```bash
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
 
-Impostare in `.env`: `APP_DEBUG=false`, `APP_ENV=production`. Per ridurre la lentezza delle sessioni si può usare `SESSION_DRIVER=database` o `redis` (se disponibile) al posto di `file`.
+Oppure usare lo script: `php deploy-cache.php` (o `./deploy-cache.sh` su Linux/macOS).
 
 ### Repository e sviluppo
 

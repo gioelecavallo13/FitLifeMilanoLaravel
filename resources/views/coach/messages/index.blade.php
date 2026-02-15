@@ -134,6 +134,10 @@
 </style>
 @endpush
 
+@push('chat-scripts')
+@include('partials.chat-scripts')
+@endpush
+
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {

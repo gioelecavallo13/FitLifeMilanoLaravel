@@ -63,6 +63,11 @@
             </tbody>
         </table>
     </div>
+    @if($users->hasPages())
+        <div class="d-flex justify-content-center mt-4">
+            {{ $users->links() }}
+        </div>
+    @endif
 </div>
 
 @push('styles')
