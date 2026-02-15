@@ -1,14 +1,15 @@
 @extends('layouts.layout')
-@section('title', 'Dettaglio corso: ' . $course->name . " | " . config("app.name"))
+@section('title', 'Anagrafica corso: ' . $course->name . " | " . config("app.name"))
 @section('content')
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-10">
             <x-breadcrumb :items="$breadcrumb" />
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="text-white fw-bold text-uppercase mb-0 h4">Dettaglio corso: {{ $course->name }}</h1>
+                <h1 class="text-white fw-bold text-uppercase mb-0 h4">Anagrafica corso: {{ $course->name }}</h1>
             </div>
 
+            {{-- Card Dettaglio corso --}}
             <div class="card bg-dark border-primary text-white shadow-lg mb-4">
                 <div class="card-header border-primary bg-black p-4">
                     <h3 class="mb-0 text-primary h4">Dettaglio corso</h3>
@@ -24,12 +25,10 @@
                             <span class="fs-5">{{ $course->coach ? $course->coach->first_name . ' ' . $course->coach->last_name : 'N/D' }}</span>
                         </div>
                     </div>
-
                     <div class="mb-3">
                         <label class="text-secondary small text-uppercase fw-bold d-block">Descrizione</label>
                         <div class="bg-black p-3 rounded border border-secondary" style="white-space: pre-wrap; line-height: 1.5;">{{ $course->description ?? '—' }}</div>
                     </div>
-
                     <div class="row mb-3">
                         <div class="col-md-4 mb-2 mb-md-0">
                             <label class="text-secondary small text-uppercase fw-bold d-block">Prezzo</label>
@@ -47,25 +46,57 @@
                             <span>{{ \Carbon\Carbon::parse($course->start_time)->format('H:i') }} – {{ \Carbon\Carbon::parse($course->end_time)->format('H:i') }}</span>
                         </div>
                     </div>
-
                     <div>
-                        <label class="text-secondary small text-uppercase fw-bold d-block">Posti</label>
-                        <span>{{ $course->capacity - $course->users_count }} su {{ $course->capacity }}</span>
+                        <label class="text-secondary small text-uppercase fw-bold d-block">Capacità</label>
+                        <span>{{ $course->capacity }} posti</span>
                     </div>
-
-                    @if($isEnrolled)
-                        <hr class="border-secondary my-4">
-                        <form action="{{ route('client.cancel', $course->id) }}" method="POST" onsubmit="return confirm('Vuoi davvero annullare la prenotazione?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-outline-danger fw-bold text-uppercase">
-                                <i class="bi bi-x-circle me-1"></i> Annulla prenotazione
-                            </button>
-                        </form>
-                    @endif
                 </div>
             </div>
 
+            {{-- Card Utenti prenotati --}}
+            <div class="card bg-dark border-warning text-white shadow-lg">
+                <div class="card-header border-warning bg-black p-3">
+                    <h5 class="mb-0 fw-bold text-uppercase text-warning">
+                        <i class="bi bi-people-fill me-2"></i>Utenti prenotati ({{ $course->users->count() }})
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover mb-0 align-middle">
+                            <thead class="bg-black text-warning text-uppercase small">
+                                <tr>
+                                    <th class="ps-4 py-3">Nome</th>
+                                    <th class="py-3">Cognome</th>
+                                    <th class="py-3">Email</th>
+                                    <th class="pe-4 py-3">Data prenotazione</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($course->users as $user)
+                                <tr>
+                                    <td class="ps-4 fw-bold">
+                                        <a href="{{ route('coach.clients.show', $user->id) }}?from=course&course_id={{ $course->id }}" class="text-white text-decoration-none link-anagrafica">{{ $user->first_name }}</a>
+                                    </td>
+                                    <td>{{ $user->last_name }}</td>
+                                    <td>
+                                        <a href="mailto:{{ $user->email }}" class="text-warning text-decoration-none">{{ $user->email }}</a>
+                                    </td>
+                                    <td class="pe-4 text-secondary small">
+                                        {{ $user->pivot->created_at ? $user->pivot->created_at->timezone('Europe/Rome')->format('d/m/Y H:i') : '—' }}
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="4" class="text-center py-5 text-secondary italic">
+                                        Nessun utente prenotato per questo corso.
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

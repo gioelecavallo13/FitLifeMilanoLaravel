@@ -2,6 +2,7 @@
 @section('title', 'Admin Dashboard' . " | " . config("app.name"))
 @section('content')
 <div class="container py-5">
+    <x-breadcrumb :items="$breadcrumb" />
     <h1 class="text-white mb-5 fw-bold">DASHBOARD AMMINISTRATORE</h1>
     <div class="row g-4 text-center justify-content-center">
         
@@ -9,7 +10,12 @@
             <div class="card bg-dark border-warning text-white h-100 shadow">
                 <div class="card-body py-5">
                     <i class="bi bi-envelope-paper display-4 text-warning mb-3"></i>
-                    <h4>MESSAGGI</h4>
+                    <h4>
+                        MESSAGGI
+                        @if(($newMessagesCount ?? 0) > 0)
+                            <span class="badge bg-danger rounded-pill ms-2">{{ $newMessagesCount }}</span>
+                        @endif
+                    </h4>
                     <p class="text-secondary small">Visualizza e rispondi ai contatti.</p>
                     <a href="{{ route('admin.messages.index') }}" class="btn btn-warning w-100 mt-3">APRI</a>
                 </div>

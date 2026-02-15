@@ -4,6 +4,7 @@
 
 @section('content')
 <div class="container py-5">
+    <x-breadcrumb :items="$breadcrumb" />
     <h1 class="text-white mb-5 fw-bold text-uppercase">Dashboard Cliente</h1>
 
     {{-- Azioni Rapide --}}

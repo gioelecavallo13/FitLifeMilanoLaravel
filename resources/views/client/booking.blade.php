@@ -4,12 +4,7 @@
 
 @section('content')
 <div class="container py-5">
-    <div class="mb-4">
-        <a href="{{ route('client.dashboard') }}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Torna alla Dashboard
-        </a>
-    </div>
-
+    <x-breadcrumb :items="$breadcrumb" />
     {{-- Header della pagina --}}
     <div class="row justify-content-center text-center mb-5">
         <div class="col-lg-8">

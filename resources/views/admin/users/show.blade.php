@@ -5,10 +5,8 @@
     <div class="row justify-content-center">
         <div class="col-lg-10">
 
+            <x-breadcrumb :items="$breadcrumb" />
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left"></i> Torna alla gestione utenti
-                </a>
                 <h1 class="text-white fw-bold text-uppercase mb-0 h4">Anagrafica: {{ $user->first_name }} {{ $user->last_name }}</h1>
             </div>
 

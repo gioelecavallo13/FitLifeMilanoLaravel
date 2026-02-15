@@ -81,6 +81,10 @@ Route::middleware(['auth'])->group(function () {
     // --- GRUPPO COACH ---
     Route::middleware(['role:coach'])->prefix('coach')->name('coach.')->group(function () {
         Route::get('/dashboard', [CoachController::class, 'index'])->name('dashboard');
+        Route::get('/corsi', [CoachController::class, 'coursesIndex'])->name('courses.index');
+        Route::get('/corsi/{id}', [CoachController::class, 'courseShow'])->name('courses.show');
+        Route::get('/clienti/{id}', [CoachController::class, 'clientShow'])->name('clients.show');
+        Route::get('/messaggi', [CoachController::class, 'messages'])->name('messages.index');
     });
 
     // --- GRUPPO CLIENTI ---

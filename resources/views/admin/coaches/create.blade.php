@@ -4,12 +4,10 @@
 
 @section('content')
 <div class="container py-5">
+    <x-breadcrumb :items="$breadcrumb" />
     {{-- Header --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="text-white fw-bold text-uppercase mb-0">Gestione Staff Coach</h1>
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Dashboard
-        </a>
     </div>
 
     <div class="row g-4">
@@ -86,7 +84,9 @@
                                     @forelse($coaches as $coach)
                                     <tr>
                                         <td class="ps-4">
-                                            <div class="fw-bold">{{ $coach->first_name }} {{ $coach->last_name }}</div>
+                                            <div class="fw-bold">
+                                                <a href="{{ route('admin.users.show', $coach->id) }}" class="text-white text-decoration-none link-anagrafica">{{ $coach->first_name }} {{ $coach->last_name }}</a>
+                                            </div>
                                             <span class="badge bg-outline-info border border-info text-info" style="font-size: 0.65rem;">COACH</span>
                                         </td>
                                         <td>{{ $coach->email }}</td>
@@ -95,9 +95,6 @@
                                         </td>
                                         <td class="pe-4 text-end">
                                             <div class="d-flex justify-content-end gap-2">
-                                                <a href="{{ route('admin.users.show', $coach->id) }}" class="btn btn-sm btn-warning">
-                                                    <i class="bi bi-eye"></i> Apri
-                                                </a>
                                                 <a href="{{ route('admin.users.edit', $coach->id) }}" class="btn btn-sm btn-outline-warning">
                                                     <i class="bi bi-pencil"> Modifica</i>
                                                 </a>

@@ -1,0 +1,47 @@
+@extends('layouts.layout')
+@section('title', 'Anagrafica: ' . $user->first_name . ' ' . $user->last_name . " | " . config("app.name"))
+@section('content')
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <x-breadcrumb :items="$breadcrumb" />
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="text-white fw-bold text-uppercase mb-0 h4">Anagrafica: {{ $user->first_name }} {{ $user->last_name }}</h1>
+            </div>
+
+            {{-- Card Dati utente (sola lettura) --}}
+            <div class="card bg-dark border-primary text-white shadow-lg mb-4">
+                <div class="card-header border-primary bg-black p-4">
+                    <h3 class="mb-0 text-primary h4">Dati utente</h3>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label class="text-secondary small text-uppercase fw-bold d-block">Nome</label>
+                            <span class="fs-5 fw-bold">{{ $user->first_name }}</span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-secondary small text-uppercase fw-bold d-block">Cognome</label>
+                            <span class="fs-5 fw-bold">{{ $user->last_name }}</span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label class="text-secondary small text-uppercase fw-bold d-block">Email</label>
+                            <a href="mailto:{{ $user->email }}" class="text-primary text-decoration-none fs-5">{{ $user->email }}</a>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-secondary small text-uppercase fw-bold d-block">Ruolo</label>
+                            <span class="badge bg-secondary">{{ strtoupper($user->role) }}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-secondary small text-uppercase fw-bold d-block">Data registrazione</label>
+                        <span>{{ $user->created_at->timezone('Europe/Rome')->format('d/m/Y H:i') }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

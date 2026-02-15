@@ -5,10 +5,8 @@
     <div class="row justify-content-center">
         <div class="col-lg-10">
 
+            <x-breadcrumb :items="$breadcrumb" />
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <a href="{{ route('admin.courses.create') }}" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left"></i> Torna alla gestione corsi
-                </a>
                 <h1 class="text-white fw-bold text-uppercase mb-0 h4">Anagrafica corso: {{ $course->name }}</h1>
             </div>
 
@@ -74,30 +72,26 @@
                                     <th class="ps-4 py-3">Nome</th>
                                     <th class="py-3">Cognome</th>
                                     <th class="py-3">Email</th>
-                                    <th class="py-3">Data prenotazione</th>
-                                    <th class="pe-4 py-3 text-end">Azioni</th>
+                                    <th class="pe-4 py-3">Data prenotazione</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($course->users as $user)
                                 <tr>
-                                    <td class="ps-4 fw-bold">{{ $user->first_name }}</td>
+                                    <td class="ps-4 fw-bold">
+                                        <a href="{{ route('admin.users.show', $user->id) }}?from=course&course_id={{ $course->id }}" class="text-white text-decoration-none link-anagrafica">{{ $user->first_name }}</a>
+                                    </td>
                                     <td>{{ $user->last_name }}</td>
                                     <td>
                                         <a href="mailto:{{ $user->email }}" class="text-warning text-decoration-none">{{ $user->email }}</a>
                                     </td>
-                                    <td class="text-secondary small">
+                                    <td class="pe-4 text-secondary small">
                                         {{ $user->pivot->created_at ? $user->pivot->created_at->timezone('Europe/Rome')->format('d/m/Y H:i') : '—' }}
-                                    </td>
-                                    <td class="pe-4 text-end">
-                                        <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-sm btn-warning">
-                                            <i class="bi bi-eye"></i> Apri
-                                        </a>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="5" class="text-center py-5 text-secondary italic">
+                                    <td colspan="4" class="text-center py-5 text-secondary italic">
                                         Nessun utente prenotato per questo corso.
                                     </td>
                                 </tr>

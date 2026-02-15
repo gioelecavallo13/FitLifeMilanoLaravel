@@ -2,11 +2,9 @@
 @section('title', 'Gestione Corsi' . " | " . config("app.name"))
 @section('content')
 <div class="container py-5">
+    <x-breadcrumb :items="$breadcrumb" />
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="text-white fw-bold text-uppercase">Gestione Corsi Fitness</h1>
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Torna alla Dashboard
-        </a>
     </div>
 
     <div class="row g-4">
@@ -102,7 +100,9 @@
                                 @forelse($courses as $course)
                                 <tr>
                                     <td class="ps-4">
-                                        <div class="fw-bold text-uppercase">{{ $course->name }}</div>
+                                        <div class="fw-bold text-uppercase">
+                                            <a href="{{ route('admin.courses.show', $course->id) }}" class="text-white text-decoration-none link-anagrafica">{{ $course->name }}</a>
+                                        </div>
                                         <div class="small text-secondary">Max {{ $course->capacity }} persone</div>
                                     </td>
                                     <td>
@@ -118,10 +118,6 @@
                                     <td class="text-center">{{ $course->users_count }}</td>
                                     <td class="pe-4 text-end">
                                         <div class="d-flex justify-content-end gap-2">
-                                            {{-- Tasto Apri (dettaglio corso e prenotati) --}}
-                                            <a href="{{ route('admin.courses.show', $course->id) }}" class="btn btn-sm btn-warning">
-                                                <i class="bi bi-eye"></i> Apri
-                                            </a>
                                             {{-- Tasto Modifica (Giallo/Outline per coerenza) --}}
                                             <a href="{{ route('admin.courses.edit', $course->id) }}" class="btn btn-sm btn-outline-warning">
                                                 <i class="bi bi-pencil">Modifica</i>

@@ -3,9 +3,9 @@
 
 @section('content')
 <div class="container py-5">
+    <x-breadcrumb :items="$breadcrumb" />
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="text-white fw-bold text-uppercase">Gestione Utenti</h2>
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary btn-sm">Torna alla Dashboard</a>
     </div>
 
     {{-- Sezione Filtri --}}
@@ -46,7 +46,9 @@
             <tbody>
                 @forelse($users as $user)
                 <tr>
-                    <td class="fw-bold">{{ $user->first_name }}</td>
+                    <td class="fw-bold">
+                        <a href="{{ route('admin.users.show', $user->id) }}" class="text-white text-decoration-none link-anagrafica">{{ $user->first_name }}</a>
+                    </td>
                     <td>{{ $user->last_name }}</td>
                     <td class="text-info">{{ $user->email }}</td>
                     <td>
@@ -57,10 +59,6 @@
                     <td class="small">{{ $user->created_at->format('d/m/Y H:i') }}</td>
                     <td>
                         <div class="d-flex justify-content-center gap-2">
-                            {{-- Pulsante Apri (anagrafica utente) --}}
-                            <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-sm btn-warning">
-                                <i class="bi bi-eye"></i> Apri
-                            </a>
                             {{-- Pulsante Modifica --}}
                             <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-outline-warning">
                                 <i class="bi bi-pencil-square"></i> Modifica

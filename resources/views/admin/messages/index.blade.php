@@ -2,11 +2,9 @@
 @section('title', 'Messaggi ricevuti' . " | " . config("app.name"))
 @section('content')
 <div class="container py-5">
+    <x-breadcrumb :items="$breadcrumb" />
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="text-white fw-bold text-uppercase">Messaggi Ricevuti</h1>
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Torna alla Dashboard
-        </a>
     </div>
 
     {{-- BARRA DEI FILTRI --}}

@@ -12,7 +12,12 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
-    public function index() { return view('admin.dashboard'); }
+    public function index()
+    {
+        $newMessagesCount = ContactRequest::where('status', 'new')->count();
+        $breadcrumb = [['label' => 'Dashboard', 'url' => null]];
+        return view('admin.dashboard', compact('newMessagesCount', 'breadcrumb'));
+    }
 
     /* --- FUNZIONI DI RECUPERO DATI (Interne) --- */
     private function getClientsList() { return User::where('role', 'client')->latest()->get(); }
@@ -26,14 +31,24 @@ class AdminController extends Controller
         if ($request->filled('email')) $query->where('email', 'like', '%' . $request->email . '%');
         if ($request->filled('status')) $query->where('status', $request->status);
         $requests = $query->latest()->get();
-        return view('admin.messages.index', compact('requests'));
+        $breadcrumb = [
+            ['label' => 'Dashboard', 'url' => route('admin.dashboard')],
+            ['label' => 'Messaggi', 'url' => null],
+        ];
+        return view('admin.messages.index', compact('requests', 'breadcrumb'));
     }
 
     public function messageShow($id)
     {
         $message = ContactRequest::findOrFail($id);
         if ($message->status === 'new') $message->update(['status' => 'read']);
-        return view('admin.messages.show-message', compact('message'));
+        $subject = strlen($message->subject) > 40 ? substr($message->subject, 0, 37) . '...' : $message->subject;
+        $breadcrumb = [
+            ['label' => 'Dashboard', 'url' => route('admin.dashboard')],
+            ['label' => 'Messaggi', 'url' => route('admin.messages.index')],
+            ['label' => $subject, 'url' => null],
+        ];
+        return view('admin.messages.show-message', compact('message', 'breadcrumb'));
     }
 
     public function messageReply(Request $request, $id)
@@ -83,7 +98,11 @@ class AdminController extends Controller
     public function createClient()
     {
         $clients = $this->getClientsList();
-        return view('admin.clients.create', compact('clients'));
+        $breadcrumb = [
+            ['label' => 'Dashboard', 'url' => route('admin.dashboard')],
+            ['label' => 'Clienti', 'url' => null],
+        ];
+        return view('admin.clients.create', compact('clients', 'breadcrumb'));
     }
 
     public function storeClient(Request $request)
@@ -112,13 +131,22 @@ class AdminController extends Controller
     {
         $coaches = User::where('role', 'coach')->get();
         $courses = $this->getCoursesList();
-        return view('admin.courses.create', compact('coaches', 'courses'));
+        $breadcrumb = [
+            ['label' => 'Dashboard', 'url' => route('admin.dashboard')],
+            ['label' => 'Corsi', 'url' => null],
+        ];
+        return view('admin.courses.create', compact('coaches', 'courses', 'breadcrumb'));
     }
 
     public function courseShow($id)
     {
         $course = Course::with(['coach', 'users'])->findOrFail($id);
-        return view('admin.courses.show', compact('course'));
+        $breadcrumb = [
+            ['label' => 'Dashboard', 'url' => route('admin.dashboard')],
+            ['label' => 'Corsi', 'url' => route('admin.courses.create')],
+            ['label' => $course->name, 'url' => null],
+        ];
+        return view('admin.courses.show', compact('course', 'breadcrumb'));
     }
 
     public function courseStore(Request $request)
@@ -141,7 +169,13 @@ class AdminController extends Controller
     {
         $course = Course::findOrFail($id);
         $coaches = User::where('role', 'coach')->get();
-        return view('admin.courses.edit', compact('course', 'coaches'));
+        $breadcrumb = [
+            ['label' => 'Dashboard', 'url' => route('admin.dashboard')],
+            ['label' => 'Corsi', 'url' => route('admin.courses.create')],
+            ['label' => $course->name, 'url' => route('admin.courses.show', $course->id)],
+            ['label' => 'Modifica', 'url' => null],
+        ];
+        return view('admin.courses.edit', compact('course', 'coaches', 'breadcrumb'));
     }
 
     public function courseUpdate(Request $request, $id)
@@ -173,13 +207,36 @@ class AdminController extends Controller
             });
         }
         $users = $query->latest()->get();
-        return view('admin.users.index', compact('users'));
+        $breadcrumb = [
+            ['label' => 'Dashboard', 'url' => route('admin.dashboard')],
+            ['label' => 'Lista utenti', 'url' => null],
+        ];
+        return view('admin.users.index', compact('users', 'breadcrumb'));
     }
 
     public function userShow($id)
     {
         $user = User::with(['courses.coach', 'createdCourses'])->findOrFail($id);
-        return view('admin.users.show', compact('user'));
+        $from = request('from');
+        $courseId = request('course_id');
+
+        if ($from === 'course' && $courseId) {
+            $course = Course::find($courseId);
+            $breadcrumb = [
+                ['label' => 'Dashboard', 'url' => route('admin.dashboard')],
+                ['label' => 'Corsi', 'url' => route('admin.courses.create')],
+                ['label' => $course ? $course->name : 'Corso', 'url' => $course ? route('admin.courses.show', $course->id) : null],
+                ['label' => $user->first_name . ' ' . $user->last_name, 'url' => null],
+            ];
+        } else {
+            $breadcrumb = [
+                ['label' => 'Dashboard', 'url' => route('admin.dashboard')],
+                ['label' => 'Lista utenti', 'url' => route('admin.users.index')],
+                ['label' => $user->first_name . ' ' . $user->last_name, 'url' => null],
+            ];
+        }
+
+        return view('admin.users.show', compact('user', 'breadcrumb'));
     }
 
     public function userEdit($id) { return view('admin.users.edit', ['user' => User::findOrFail($id)]); }

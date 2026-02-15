@@ -16,7 +16,8 @@ class ClientController extends Controller
     {
         // Recuperiamo i corsi a cui l'utente è già iscritto per mostrarli in dashboard
         $myCourses = Auth::user()->courses()->with('coach')->get();
-        return view('client.dashboard', compact('myCourses'));
+        $breadcrumb = [['label' => 'Dashboard', 'url' => null]];
+        return view('client.dashboard', compact('myCourses', 'breadcrumb'));
     }
 
     /**
@@ -27,8 +28,11 @@ class ClientController extends Controller
         // Carichiamo tutti i corsi con il coach e il conteggio degli iscritti
         $courses = Course::with('coach')->withCount('users')->get();
         $enrolledCourseIds = Auth::user()->courses()->pluck('courses.id')->toArray();
-
-        return view('client.booking', compact('courses', 'enrolledCourseIds'));
+        $breadcrumb = [
+            ['label' => 'Dashboard', 'url' => route('client.dashboard')],
+            ['label' => 'Prenota corsi', 'url' => null],
+        ];
+        return view('client.booking', compact('courses', 'enrolledCourseIds', 'breadcrumb'));
     }
 
     /**
@@ -38,8 +42,13 @@ class ClientController extends Controller
     {
         $course = Course::with('coach')->withCount('users')->findOrFail($id);
         $isEnrolled = Auth::user()->courses()->where('course_id', $id)->exists();
-
-        return view('client.courses.show', compact('course', 'isEnrolled'));
+        $courseLabel = strlen($course->name) > 40 ? substr($course->name, 0, 37) . '...' : $course->name;
+        $breadcrumb = [
+            ['label' => 'Dashboard', 'url' => route('client.dashboard')],
+            ['label' => 'Prenota corsi', 'url' => route('client.booking')],
+            ['label' => $courseLabel, 'url' => null],
+        ];
+        return view('client.courses.show', compact('course', 'isEnrolled', 'breadcrumb'));
     }
 
     /**

@@ -2,14 +2,12 @@
 @section('title', 'Modifica Corso' . " | " . config("app.name"))
 @section('content')
 <div class="container py-5">
+    <x-breadcrumb :items="$breadcrumb" />
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="text-white fw-bold text-uppercase mb-0">Modifica Corso</h1>
             <p class="text-secondary">Stai modificando: <span class="text-primary fw-bold">{{ $course->name }}</span></p>
         </div>
-        <a href="{{ route('admin.courses.create') }}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Annulla e Torna Indietro
-        </a>
     </div>
 
     <div class="row justify-content-center">

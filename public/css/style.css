@@ -377,3 +377,20 @@ select.custom-input:valid {
         left: 0 !important;
     }
 }
+
+/* Link anagrafica in tabelle admin: aspetto invariato, hover giallo */
+.link-anagrafica:hover {
+    color: #ffc107 !important;
+    cursor: pointer;
+}
+
+/* Breadcrumb admin: un solo " / ", stile coerente con tema scuro */
+.breadcrumb-admin {
+    background: transparent !important;
+    padding: 0;
+    font-size: 0.875rem;
+}
+.breadcrumb-admin .breadcrumb-item::before {
+    display: none;
+    content: none;
+}

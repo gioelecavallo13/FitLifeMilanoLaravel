@@ -5,11 +5,9 @@
     <div class="row justify-content-center">
         <div class="col-lg-10">
             
+            <x-breadcrumb :items="$breadcrumb" />
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <a href="{{ route('admin.messages.index') }}" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left"></i> Indietro
-                </a>
-                <div class="text-end">
+                <div class="text-end ms-auto">
                     <span class="text-secondary small d-block">Stato Attuale:</span>
                     @if($message->status == 'new')
                         <span class="badge bg-danger">NUOVO</span>
