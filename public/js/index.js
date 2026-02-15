@@ -1,12 +1,16 @@
-// ------------------- Contatori animati -------------------
+// ------------------- Contatori animati (durata minima 2s) -------------------
+const COUNTER_DURATION = 2000; // ms
 const counters = document.querySelectorAll('.counter');
 counters.forEach(counter => {
+    const target = +counter.getAttribute('data-target');
+    const startTime = Date.now();
+
     const updateCount = () => {
-        const target = +counter.getAttribute('data-target');
-        let count = +counter.innerText;
-        const increment = target / 200; // circa 0.5 secondi
-        if(count < target) {
-            counter.innerText = Math.ceil(count + increment);
+        const elapsed = Date.now() - startTime;
+        const value = Math.min(target, Math.ceil((elapsed / COUNTER_DURATION) * target));
+        counter.innerText = value;
+
+        if (elapsed < COUNTER_DURATION) {
             requestAnimationFrame(updateCount);
         } else {
             counter.innerText = target;
@@ -19,7 +23,7 @@ counters.forEach(counter => {
 const scrollWrapper = document.getElementById('scrollBanner');
 const stats = document.querySelectorAll('.stat');
 
-let leftPos; 
+let leftPos;
 const speed = 4; // px per frame
 let targetPos = null;
 let animationId = null;
@@ -34,9 +38,9 @@ function calculateTarget() {
 }
 
 function startAnimation() {
-    cancelAnimationFrame(animationId); // blocco eventuali animazioni precedenti
+    cancelAnimationFrame(animationId);
 
-    leftPos = window.innerWidth; // ricomincia da destra
+    leftPos = window.innerWidth;
     targetPos = calculateTarget();
 
     function animateScrollBanner() {
@@ -45,7 +49,7 @@ function startAnimation() {
         if (leftPos <= targetPos) {
             leftPos = targetPos;
             scrollWrapper.style.left = leftPos + 'px';
-            return; // stop
+            return;
         }
 
         scrollWrapper.style.left = leftPos + 'px';
@@ -55,10 +59,8 @@ function startAnimation() {
     animationId = requestAnimationFrame(animateScrollBanner);
 }
 
-// avvio iniziale
 startAnimation();
 
-// ricalcolo se cambia la dimensione della finestra
 window.addEventListener('resize', () => {
     startAnimation();
 });

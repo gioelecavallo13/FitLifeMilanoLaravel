@@ -88,55 +88,35 @@
                         <table class="table table-dark table-hover mb-0 align-middle">
                             <thead class="bg-black text-primary">
                                 <tr>
-                                    <th class="ps-4">Corso</th>
-                                    <th>Coach</th>
-                                    <th>Orario</th>
-                                    <th>Prezzo</th>
-                                    <th class="text-center">Iscritti</th>
-                                    <th class="pe-4 text-end">Azioni</th>
+                                    <th class="ps-4 py-3">Corso</th>
+                                    <th class="py-3">Coach</th>
+                                    <th class="py-3">Orario</th>
+                                    <th class="py-3">Prezzo</th>
+                                    <th class="py-3 pe-4 text-center">Iscritti</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($courses as $course)
-                                <tr>
-                                    <td class="ps-4">
-                                        <div class="fw-bold text-uppercase">
-                                            <a href="{{ route('admin.courses.show', $course->id) }}" class="text-white text-decoration-none link-anagrafica">{{ $course->name }}</a>
-                                        </div>
+                                <tr class="table-row-chat cursor-pointer" data-href="{{ route('admin.courses.show', $course->id) }}" role="button" tabindex="0">
+                                    <td class="ps-4 py-3">
+                                        <div class="fw-bold text-uppercase">{{ $course->name }}</div>
                                         <div class="small text-secondary">Max {{ $course->capacity }} persone</div>
                                     </td>
-                                    <td>
+                                    <td class="py-3">
                                         <span class="badge bg-outline-info border border-info text-info">
                                             {{ $course->coach->first_name ?? 'N/D' }}
                                         </span>
                                     </td>
-                                    <td>
+                                    <td class="py-3">
                                         <div class="small">{{ $course->day_of_week }}</div>
                                         <div class="fw-bold text-primary">{{ $course->start_time }} - {{ $course->end_time }}</div>
                                     </td>
-                                    <td>{{ number_format($course->price, 2) }}€</td>
-                                    <td class="text-center">{{ $course->users_count }}</td>
-                                    <td class="pe-4 text-end">
-                                        <div class="d-flex justify-content-end gap-2">
-                                            {{-- Tasto Modifica (Giallo/Outline per coerenza) --}}
-                                            <a href="{{ route('admin.courses.edit', $course->id) }}" class="btn btn-sm btn-outline-warning">
-                                                <i class="bi bi-pencil">Modifica</i>
-                                            </a>
-
-                                            {{-- Form Elimina (Inline) --}}
-                                            <form action="{{ route('admin.courses.destroy', $course->id) }}" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare questo corso?')">
-                                                @csrf 
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                    <i class="bi bi-trash">Elimina</i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
+                                    <td class="py-3">{{ number_format($course->price, 2) }}€</td>
+                                    <td class="py-3 pe-4 text-center">{{ $course->users_count }}</td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="6" class="text-center py-5 text-secondary italic">
+                                    <td colspan="5" class="text-center py-5 text-secondary italic">
                                         Nessun corso creato finora.
                                     </td>
                                 </tr>
@@ -149,4 +129,29 @@
         </div>
     </div>
 </div>
+
+@push('styles')
+<style>
+.table-row-chat { cursor: pointer; }
+.table-row-chat:hover { background-color: rgba(255,255,255,0.05); }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.table-row-chat[data-href]').forEach(function(row) {
+        row.addEventListener('click', function() {
+            window.location.href = this.dataset.href;
+        });
+        row.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                window.location.href = this.dataset.href;
+            }
+        });
+    });
+});
+</script>
+@endpush
 @endsection

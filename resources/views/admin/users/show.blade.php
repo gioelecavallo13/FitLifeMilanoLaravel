@@ -79,25 +79,19 @@
                                 <tr>
                                     <th class="ps-4 py-3">Corso</th>
                                     <th class="py-3">Giorno</th>
-                                    <th class="py-3">Orario</th>
-                                    <th class="pe-4 py-3 text-end">Azioni</th>
+                                    <th class="py-3 pe-4">Orario</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($user->createdCourses as $course)
-                                <tr>
-                                    <td class="ps-4 fw-bold text-warning">{{ $course->name }}</td>
-                                    <td>{{ $giorni[$course->day_of_week] ?? $course->day_of_week }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($course->start_time)->format('H:i') }} – {{ \Carbon\Carbon::parse($course->end_time)->format('H:i') }}</td>
-                                    <td class="pe-4 text-end">
-                                        <a href="{{ route('admin.courses.show', $course->id) }}" class="btn btn-sm btn-warning">
-                                            <i class="bi bi-eye"></i> Apri
-                                        </a>
-                                    </td>
+                                <tr class="table-row-chat cursor-pointer" data-href="{{ route('admin.courses.show', $course->id) }}" role="button" tabindex="0">
+                                    <td class="ps-4 py-3 fw-bold text-warning">{{ $course->name }}</td>
+                                    <td class="py-3">{{ $giorni[$course->day_of_week] ?? $course->day_of_week }}</td>
+                                    <td class="py-3 pe-4">{{ \Carbon\Carbon::parse($course->start_time)->format('H:i') }} – {{ \Carbon\Carbon::parse($course->end_time)->format('H:i') }}</td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="4" class="text-center py-5 text-secondary italic">
+                                    <td colspan="3" class="text-center py-5 text-secondary italic">
                                         Nessun corso assegnato.
                                     </td>
                                 </tr>
@@ -124,38 +118,23 @@
                                     <th class="py-3">Coach</th>
                                     <th class="py-3">Giorno</th>
                                     <th class="py-3">Orario</th>
-                                    <th class="py-3">Data prenotazione</th>
-                                    <th class="pe-4 py-3 text-end">Azioni</th>
+                                    <th class="py-3 pe-4">Data prenotazione</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($user->courses as $course)
-                                <tr>
-                                    <td class="ps-4 fw-bold text-warning">{{ $course->name }}</td>
-                                    <td>{{ $course->coach ? $course->coach->first_name . ' ' . $course->coach->last_name : 'N/D' }}</td>
-                                    <td>{{ $giorni[$course->day_of_week] ?? $course->day_of_week }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($course->start_time)->format('H:i') }} – {{ \Carbon\Carbon::parse($course->end_time)->format('H:i') }}</td>
-                                    <td class="text-secondary small">
+                                <tr class="table-row-chat cursor-pointer" data-href="{{ route('admin.courses.show', $course->id) }}" role="button" tabindex="0">
+                                    <td class="ps-4 py-3 fw-bold text-warning">{{ $course->name }}</td>
+                                    <td class="py-3">{{ $course->coach ? $course->coach->first_name . ' ' . $course->coach->last_name : 'N/D' }}</td>
+                                    <td class="py-3">{{ $giorni[$course->day_of_week] ?? $course->day_of_week }}</td>
+                                    <td class="py-3">{{ \Carbon\Carbon::parse($course->start_time)->format('H:i') }} – {{ \Carbon\Carbon::parse($course->end_time)->format('H:i') }}</td>
+                                    <td class="py-3 pe-4 text-secondary small">
                                         {{ $course->pivot->created_at ? $course->pivot->created_at->timezone('Europe/Rome')->format('d/m/Y H:i') : '—' }}
-                                    </td>
-                                    <td class="pe-4 text-end">
-                                        <div class="d-flex gap-2 justify-content-end">
-                                            <a href="{{ route('admin.courses.show', $course->id) }}" class="btn btn-sm btn-warning">
-                                                <i class="bi bi-calendar-check"></i> Apri corso
-                                            </a>
-                                            @if($course->coach)
-                                                <a href="{{ route('admin.users.show', $course->coach->id) }}" class="btn btn-sm btn-outline-info">
-                                                    <i class="bi bi-person-badge"></i> Apri coach
-                                                </a>
-                                            @else
-                                                <span class="text-secondary small align-self-center">N/D</span>
-                                            @endif
-                                        </div>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="6" class="text-center py-5 text-secondary italic">
+                                    <td colspan="5" class="text-center py-5 text-secondary italic">
                                         Nessuna prenotazione.
                                     </td>
                                 </tr>
@@ -170,4 +149,29 @@
         </div>
     </div>
 </div>
+
+@push('styles')
+<style>
+.table-row-chat { cursor: pointer; }
+.table-row-chat:hover { background-color: rgba(255,255,255,0.05); }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.table-row-chat[data-href]').forEach(function(row) {
+        row.addEventListener('click', function() {
+            window.location.href = this.dataset.href;
+        });
+        row.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                window.location.href = this.dataset.href;
+            }
+        });
+    });
+});
+</script>
+@endpush
 @endsection

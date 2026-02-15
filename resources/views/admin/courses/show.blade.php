@@ -23,7 +23,11 @@
                         </div>
                         <div class="col-md-6">
                             <label class="text-secondary small text-uppercase fw-bold d-block">Coach</label>
-                            <span class="fs-5">{{ $course->coach ? $course->coach->first_name . ' ' . $course->coach->last_name : 'N/D' }}</span>
+                            @if($course->coach)
+                                <a href="{{ route('admin.users.show', $course->coach->id) }}?from=course&course_id={{ $course->id }}" class="fs-5 text-primary text-decoration-none link-anagrafica">{{ $course->coach->first_name }} {{ $course->coach->last_name }}</a>
+                            @else
+                                <span class="fs-5">N/D</span>
+                            @endif
                         </div>
                     </div>
 
@@ -55,6 +59,19 @@
                         <span>{{ $course->capacity }} posti</span>
                     </div>
                 </div>
+                <div class="card-footer border-primary bg-black p-4 d-flex gap-2 flex-wrap">
+                    <a href="{{ route('admin.courses.edit', $course->id) }}" class="btn btn-warning fw-bold">
+                        <i class="bi bi-pencil-square"></i> Modifica
+                    </a>
+                    <form action="{{ route('admin.courses.destroy') }}" method="POST" class="d-inline"
+                          onsubmit="return confirm('Sei sicuro di voler eliminare questo corso? Questa azione è irreversibile.')">
+                        @csrf
+                        <input type="hidden" name="id" value="{{ $course->id }}">
+                        <button type="submit" class="btn btn-outline-danger fw-bold">
+                            <i class="bi bi-trash"></i> Elimina
+                        </button>
+                    </form>
+                </div>
             </div>
 
             {{-- Card Utenti prenotati --}}
@@ -72,26 +89,34 @@
                                     <th class="ps-4 py-3">Nome</th>
                                     <th class="py-3">Cognome</th>
                                     <th class="py-3">Email</th>
-                                    <th class="pe-4 py-3">Data prenotazione</th>
+                                    <th class="py-3">Data prenotazione</th>
+                                    <th class="pe-4 py-3 text-end">Azioni</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($course->users as $user)
-                                <tr>
-                                    <td class="ps-4 fw-bold">
-                                        <a href="{{ route('admin.users.show', $user->id) }}?from=course&course_id={{ $course->id }}" class="text-white text-decoration-none link-anagrafica">{{ $user->first_name }}</a>
+                                <tr class="table-row-course-user cursor-pointer" data-href="{{ route('admin.users.show', $user->id) }}?from=course&course_id={{ $course->id }}" role="button" tabindex="0">
+                                    <td class="ps-4 py-3 fw-bold">{{ $user->first_name }}</td>
+                                    <td class="py-3">{{ $user->last_name }}</td>
+                                    <td class="py-3">
+                                        <a href="mailto:{{ $user->email }}" class="text-warning text-decoration-none" onclick="event.stopPropagation()">{{ $user->email }}</a>
                                     </td>
-                                    <td>{{ $user->last_name }}</td>
-                                    <td>
-                                        <a href="mailto:{{ $user->email }}" class="text-warning text-decoration-none">{{ $user->email }}</a>
-                                    </td>
-                                    <td class="pe-4 text-secondary small">
+                                    <td class="py-3 text-secondary small">
                                         {{ $user->pivot->created_at ? $user->pivot->created_at->timezone('Europe/Rome')->format('d/m/Y H:i') : '—' }}
+                                    </td>
+                                    <td class="pe-4 py-3 text-end" onclick="event.stopPropagation()">
+                                        <form action="{{ route('admin.courses.unenroll', [$course->id, $user->id]) }}" method="POST" class="d-inline"
+                                              onsubmit="return confirm('Vuoi annullare la prenotazione di questo utente?')">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-x-circle me-1"></i> Annulla
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="4" class="text-center py-5 text-secondary italic">
+                                    <td colspan="5" class="text-center py-5 text-secondary italic">
                                         Nessun utente prenotato per questo corso.
                                     </td>
                                 </tr>
@@ -105,4 +130,29 @@
         </div>
     </div>
 </div>
+
+@push('styles')
+<style>
+.table-row-course-user { cursor: pointer; }
+.table-row-course-user:hover { background-color: rgba(255,255,255,0.05); }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.table-row-course-user[data-href]').forEach(function(row) {
+        row.addEventListener('click', function() {
+            window.location.href = this.dataset.href;
+        });
+        row.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                window.location.href = this.dataset.href;
+            }
+        });
+    });
+});
+</script>
+@endpush
 @endsection

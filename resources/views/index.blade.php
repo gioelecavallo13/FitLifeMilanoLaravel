@@ -111,12 +111,36 @@
     flex-shrink: 0;    /* Impedisce alle stats di rimpicciolirsi */
     min-width: 250px;  /* Assicura una larghezza minima per il calcolo del centro */
 }
+
+/* --- STATS BANNER: desktop --- */
+.stats-banner {
+    height: 100px;
+}
+
+/* --- STATS BANNER: ridimensionamento su mobile (animazione sempre attiva) --- */
+@media (max-width: 768px) {
+    .stats-banner {
+        height: 72px;
+        min-height: 72px;
+    }
+    .stats-banner .stat {
+        min-width: 140px;
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+    .stats-banner .stat .counter {
+        font-size: 1.25rem !important;
+    }
+    .stats-banner .stat .small {
+        font-size: 0.65rem !important;
+    }
+}
 </style>
 @endpush
 
 @section('content')
 
-<section class="stats bg-warning py-3 shadow-sm overflow-hidden" style="height: 100px; position: relative;">
+<section class="stats stats-banner bg-warning py-3 shadow-sm overflow-hidden" style="position: relative;">
     {{-- Il wrapper deve avere position absolute per essere mosso dal JS via 'left' --}}
     <div id="scrollBanner" class="d-flex align-items-center position-absolute text-dark fw-bold" style="white-space: nowrap; left: 100%;">
         
@@ -155,8 +179,8 @@
     </div>
 </section>
 
-<section class="testimonials py-5" style="background-color: #333;">
-    <div class="container">
+<section class="testimonials pb-5 pt-0" style="background-color: #333;">
+    <div class="container pt-4">
         <h2 class="text-warning text-center display-5 fw-bold mb-5">Cosa dicono di noi</h2>
 
         <div class="row g-4 justify-content-center">
