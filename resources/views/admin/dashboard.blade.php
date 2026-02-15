@@ -23,6 +23,22 @@
         </div>
 
         <div class="col-12 col-sm-6 col-lg">
+            <div class="card bg-dark border-info text-white h-100 shadow">
+                <div class="card-body py-5">
+                    <i class="bi bi-chat-dots display-4 text-info mb-3"></i>
+                    <h4>
+                        CHAT
+                        @if(($unreadChatCount ?? 0) > 0)
+                            <span class="badge bg-danger rounded-pill ms-2">{{ $unreadChatCount }}</span>
+                        @endif
+                    </h4>
+                    <p class="text-secondary small">Chat con coach e clienti.</p>
+                    <a href="{{ route('admin.chat.index') }}" class="btn btn-outline-info w-100 mt-3">APRI</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg">
             <div class="card bg-dark border-success text-white h-100 shadow">
                 <div class="card-body py-5">
                     <i class="bi bi-people display-4 text-success mb-3"></i>

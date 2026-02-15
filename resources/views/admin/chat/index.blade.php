@@ -1,22 +1,22 @@
 @extends('layouts.layout')
-@section('title', 'Messaggi' . ' | ' . config('app.name'))
+@section('title', 'Chat' . ' | ' . config('app.name'))
 @section('content')
 <div class="container py-5">
     <x-breadcrumb :items="$breadcrumb" />
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-        <h1 class="text-white fw-bold text-uppercase mb-0">Messaggi con i coach</h1>
-        <button type="button" class="btn btn-info fw-bold" data-bs-toggle="modal" data-bs-target="#nuovaChatModal">
+        <h1 class="text-white fw-bold text-uppercase mb-0">Chat con coach e clienti</h1>
+        <button type="button" class="btn btn-warning fw-bold" data-bs-toggle="modal" data-bs-target="#nuovaChatModal">
             <i class="bi bi-plus-lg me-1"></i> Nuova chat
         </button>
     </div>
 
-    <div class="card bg-dark border-info shadow-lg text-white">
+    <div class="card bg-dark border-warning shadow-lg text-white">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-dark table-hover mb-0 align-middle">
-                    <thead class="bg-black text-info text-uppercase small">
+                    <thead class="bg-black text-warning text-uppercase small">
                         <tr>
-                            <th class="ps-4 py-3">Coach</th>
+                            <th class="ps-4 py-3">Utente</th>
                             <th class="py-3">Ultimo messaggio</th>
                             <th class="py-3 pe-4">Data</th>
                         </tr>
@@ -24,13 +24,14 @@
                     <tbody>
                         @forelse($conversations as $conv)
                             @php
-                                $other = $conv->otherParticipant(auth()->user());
+                                $other = $conv->otherUser;
                                 $lastMsg = $conv->messages->first();
                                 $unread = $conv->unread_count ?? 0;
                             @endphp
-                            <tr class="table-row-chat cursor-pointer" data-href="{{ route('client.messages.show', $conv->id) }}" role="button" tabindex="0">
+                            <tr class="table-row-chat cursor-pointer" data-href="{{ route('admin.chat.show', $conv->id) }}" role="button" tabindex="0">
                                 <td class="ps-4 py-3">
                                     {{ $other->first_name }} {{ $other->last_name }}
+                                    <span class="badge {{ $other->role === 'coach' ? 'bg-info' : 'bg-secondary' }} rounded-pill ms-1">{{ $other->role === 'coach' ? 'Coach' : 'Cliente' }}</span>
                                     @if($unread > 0)
                                         <span class="badge bg-danger rounded-pill ms-2" aria-label="{{ $unread }} messaggi non letti">{{ $unread }}</span>
                                     @endif
@@ -54,7 +55,7 @@
                             <tr>
                                 <td colspan="3" class="text-center py-5 text-secondary">
                                     <i class="bi bi-chat-dots display-6 d-block mb-2"></i>
-                                    Nessuna conversazione. Usa "Nuova chat" per scrivere a un coach.
+                                    Nessuna conversazione. Usa "Nuova chat" per scrivere a un coach o a un cliente.
                                 </td>
                             </tr>
                         @endforelse
@@ -65,32 +66,53 @@
     </div>
 </div>
 
-{{-- Modal Nuova chat: ricerca e scelta coach --}}
+{{-- Modal Nuova chat: ricerca e scelta destinatario --}}
 <div class="modal fade" id="nuovaChatModal" tabindex="-1" aria-labelledby="nuovaChatModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
-        <div class="modal-content bg-dark border-info text-white">
-            <div class="modal-header border-info">
-                <h5 class="modal-title text-info" id="nuovaChatModalLabel">Scegli a chi scrivere</h5>
+        <div class="modal-content bg-dark border-warning text-white">
+            <div class="modal-header border-warning">
+                <h5 class="modal-title text-warning" id="nuovaChatModalLabel">Scegli a chi scrivere</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Chiudi"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
                     <input type="text" id="chatSearchUser" class="form-control bg-black text-white border-secondary" placeholder="Cerca per nome o email..." autocomplete="off">
                 </div>
-                <div class="list-group list-group-flush">
-                    @isset($coaches)
-                        @foreach($coaches as $u)
-                            <a href="{{ route('client.messages.startWithCoach', $u->id) }}" class="list-group-item list-group-item-action bg-black border-secondary text-white chat-user-item" data-name="{{ strtolower($u->first_name . ' ' . $u->last_name) }}" data-email="{{ strtolower($u->email) }}">
-                                <strong>{{ $u->first_name }} {{ $u->last_name }}</strong>
-                                <span class="text-secondary small d-block">{{ $u->email }}</span>
-                            </a>
-                        @endforeach
-                        @if($coaches->isEmpty())
-                            <p class="text-secondary small">Nessun coach.</p>
-                        @endif
-                    @else
-                        <p class="text-secondary small">Nessun coach disponibile.</p>
-                    @endisset
+                <ul class="nav nav-tabs border-secondary mb-3" id="chatUserTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active text-warning" id="tab-coach" data-bs-toggle="tab" data-bs-target="#panel-coach" type="button" role="tab">Coach</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link text-warning" id="tab-client" data-bs-toggle="tab" data-bs-target="#panel-client" type="button" role="tab">Clienti</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="chatUserPanels">
+                    <div class="tab-pane fade show active" id="panel-coach" role="tabpanel">
+                        <div id="list-coach" class="list-group list-group-flush">
+                            @foreach($coaches as $u)
+                                <a href="{{ route('admin.chat.startWithUser', $u->id) }}" class="list-group-item list-group-item-action bg-black border-secondary text-white chat-user-item" data-name="{{ strtolower($u->first_name . ' ' . $u->last_name) }}" data-email="{{ strtolower($u->email) }}">
+                                    <strong>{{ $u->first_name }} {{ $u->last_name }}</strong>
+                                    <span class="text-secondary small d-block">{{ $u->email }}</span>
+                                </a>
+                            @endforeach
+                            @if($coaches->isEmpty())
+                                <p class="text-secondary small">Nessun coach.</p>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="panel-client" role="tabpanel">
+                        <div id="list-client" class="list-group list-group-flush">
+                            @foreach($clients as $u)
+                                <a href="{{ route('admin.chat.startWithUser', $u->id) }}" class="list-group-item list-group-item-action bg-black border-secondary text-white chat-user-item" data-name="{{ strtolower($u->first_name . ' ' . $u->last_name) }}" data-email="{{ strtolower($u->email) }}">
+                                    <strong>{{ $u->first_name }} {{ $u->last_name }}</strong>
+                                    <span class="text-secondary small d-block">{{ $u->email }}</span>
+                                </a>
+                            @endforeach
+                            @if($clients->isEmpty())
+                                <p class="text-secondary small">Nessun cliente.</p>
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

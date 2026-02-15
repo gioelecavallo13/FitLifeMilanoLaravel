@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Conversation extends Model
 {
-    protected $fillable = ['coach_id', 'client_id'];
+    protected $fillable = ['coach_id', 'client_id', 'admin_id', 'other_user_id'];
 
     public function coach(): BelongsTo
     {
@@ -18,6 +18,16 @@ class Conversation extends Model
     public function client(): BelongsTo
     {
         return $this->belongsTo(User::class, 'client_id');
+    }
+
+    public function admin(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'admin_id');
+    }
+
+    public function otherUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'other_user_id');
     }
 
     public function messages(): HasMany
@@ -36,17 +46,42 @@ class Conversation extends Model
 
     public function isParticipant($user): bool
     {
-        return (int) $user->id === (int) $this->coach_id || (int) $user->id === (int) $this->client_id;
+        $id = (int) $user->id;
+        if ($this->coach_id && $id === (int) $this->coach_id) {
+            return true;
+        }
+        if ($this->client_id && $id === (int) $this->client_id) {
+            return true;
+        }
+        if ($this->admin_id && $id === (int) $this->admin_id) {
+            return true;
+        }
+        if ($this->other_user_id && $id === (int) $this->other_user_id) {
+            return true;
+        }
+        return false;
     }
 
     public function otherParticipant($user): ?User
     {
-        if ((int) $user->id === (int) $this->coach_id) {
+        $id = (int) $user->id;
+        if ($this->coach_id && $id === (int) $this->coach_id) {
             return $this->client;
         }
-        if ((int) $user->id === (int) $this->client_id) {
+        if ($this->client_id && $id === (int) $this->client_id) {
             return $this->coach;
         }
+        if ($this->admin_id && $id === (int) $this->admin_id) {
+            return $this->otherUser;
+        }
+        if ($this->other_user_id && $id === (int) $this->other_user_id) {
+            return $this->admin;
+        }
         return null;
+    }
+
+    public function scopeForAdmin($query, $adminId)
+    {
+        return $query->where('admin_id', $adminId);
     }
 }

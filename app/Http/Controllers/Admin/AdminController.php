@@ -7,6 +7,7 @@ use App\Models\ContactRequest;
 use App\Models\User;
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 
@@ -15,8 +16,9 @@ class AdminController extends Controller
     public function index()
     {
         $newMessagesCount = ContactRequest::where('status', 'new')->count();
+        $unreadChatCount = Auth::user()->unreadMessagesCount();
         $breadcrumb = [['label' => 'Dashboard', 'url' => null]];
-        return view('admin.dashboard', compact('newMessagesCount', 'breadcrumb'));
+        return view('admin.dashboard', compact('newMessagesCount', 'unreadChatCount', 'breadcrumb'));
     }
 
     /* --- FUNZIONI DI RECUPERO DATI (Interne) --- */
@@ -195,6 +197,13 @@ class AdminController extends Controller
         $course->users()->detach();
         $course->delete();
         return redirect()->route('admin.courses.create')->with('success', 'Corso eliminato!');
+    }
+
+    public function courseUnenroll($courseId, $userId)
+    {
+        $course = Course::findOrFail($courseId);
+        $course->users()->detach($userId);
+        return redirect()->back()->with('success', 'Prenotazione annullata.');
     }
 
     /* --- ANAGRAFICA UTENTI --- */

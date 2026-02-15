@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Coach\CoachController;
 use App\Http\Controllers\Client\ClientController;
 use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\Admin\AdminConversationController;
 use App\Http\Controllers\AuthController;
 
 /*
@@ -57,11 +58,18 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/courses/{id}/edit', [AdminController::class, 'courseEdit'])->name('courses.edit'); 
         Route::put('/courses/{id}', [AdminController::class, 'courseUpdate'])->name('courses.update');
         Route::post('/courses/destroy', [AdminController::class, 'courseDestroy'])->name('courses.destroy');
+        Route::post('/courses/{courseId}/unenroll/{userId}', [AdminController::class, 'courseUnenroll'])->name('courses.unenroll');
 
-        // Sottosezione Messaggi
+        // Sottosezione Messaggi (ContactRequest / form contatti)
         Route::get('/messaggi', [AdminController::class, 'messages'])->name('messages.index');
         Route::get('/messaggi/{id}', [AdminController::class, 'messageShow'])->name('messages.show');
         Route::post('/messaggi/{id}/reply', [AdminController::class, 'messageReply'])->name('messages.reply');
+
+        // Chat con coach e clienti
+        Route::get('/chat', [AdminConversationController::class, 'index'])->name('chat.index');
+        Route::get('/chat/conversazione/{id}', [AdminConversationController::class, 'show'])->name('chat.show');
+        Route::post('/chat/conversazione/{id}', [AdminConversationController::class, 'storeMessage'])->name('chat.send');
+        Route::get('/chat/conversazione/con-utente/{userId}', [AdminConversationController::class, 'startWithUser'])->name('chat.startWithUser');
 
         // Gestione Coach
         Route::get('/inserisci-coach', [AdminController::class, 'createCoach'])->name('coaches.create');
@@ -89,6 +97,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/messaggi/conversazione/{id}', [ConversationController::class, 'show'])->name('messages.show');
         Route::post('/messaggi/conversazione/{id}', [ConversationController::class, 'storeMessage'])->name('messages.send');
         Route::get('/messaggi/conversazione/con-client/{clientId}', [ConversationController::class, 'startWithClient'])->name('messages.startWithClient');
+        Route::get('/messaggi/conversazione/con-coach-collega/{coachId}', [ConversationController::class, 'startWithCoachColleague'])->name('messages.startWithCoachColleague');
     });
 
     // --- GRUPPO CLIENTI ---

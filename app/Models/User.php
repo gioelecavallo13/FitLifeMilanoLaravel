@@ -90,12 +90,23 @@ class User extends Authenticatable
     }
 
     /**
+     * Conversazioni in cui l'utente è l'admin
+     */
+    public function conversationsAsAdmin(): HasMany
+    {
+        return $this->hasMany(Conversation::class, 'admin_id');
+    }
+
+    /**
      * Totale messaggi non letti per questo utente (in tutte le sue conversazioni).
+     * Include conversazioni coach-client e conversazioni admin-utente (admin o other_user).
      */
     public function unreadMessagesCount(): int
     {
         $conversationIds = Conversation::where('coach_id', $this->id)
             ->orWhere('client_id', $this->id)
+            ->orWhere('admin_id', $this->id)
+            ->orWhere('other_user_id', $this->id)
             ->pluck('id');
 
         return Message::whereIn('conversation_id', $conversationIds)

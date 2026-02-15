@@ -19,7 +19,8 @@ class ConversationController extends Controller
         $user = Auth::user();
         $conversations = Conversation::where('coach_id', $user->id)
             ->orWhere('client_id', $user->id)
-            ->with(['coach', 'client', 'messages' => fn ($q) => $q->latest()->limit(1)])
+            ->orWhere('other_user_id', $user->id)
+            ->with(['coach', 'client', 'admin', 'otherUser', 'messages' => fn ($q) => $q->latest()->limit(1)])
             ->latest('updated_at')
             ->get();
 
@@ -41,7 +42,12 @@ class ConversationController extends Controller
             ];
 
         $view = $isCoach ? 'coach.messages.index' : 'client.messages.index';
-        $coaches = $isCoach ? null : User::where('role', 'coach')->orderBy('first_name')->orderBy('last_name')->get();
+        if ($isCoach) {
+            $clients = User::where('role', 'client')->orderBy('first_name')->orderBy('last_name')->get();
+            $coaches = User::where('role', 'coach')->where('id', '!=', $user->id)->orderBy('first_name')->orderBy('last_name')->get();
+            return view($view, compact('conversations', 'breadcrumb', 'clients', 'coaches', 'totalUnread'));
+        }
+        $coaches = User::where('role', 'coach')->orderBy('first_name')->orderBy('last_name')->get();
         return view($view, compact('conversations', 'breadcrumb', 'coaches', 'totalUnread'));
     }
 
@@ -152,5 +158,22 @@ class ConversationController extends Controller
             ]
         );
         return redirect()->route('client.messages.show', $conversation->id);
+    }
+
+    /**
+     * Coach: apri o crea conversazione con un altro coach (collega) e redirect alla chat.
+     */
+    public function startWithCoachColleague($coachId)
+    {
+        if (Auth::user()->role !== 'coach') {
+            abort(403);
+        }
+        $conversation = Conversation::firstOrCreate(
+            [
+                'coach_id' => Auth::id(),
+                'client_id' => $coachId,
+            ]
+        );
+        return redirect()->route('coach.messages.show', $conversation->id);
     }
 }
