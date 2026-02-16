@@ -27,7 +27,7 @@
                                         <i class="bi bi-person-circle fs-2"></i>
                                     </div>
                                 @endif
-                                <div>
+                                <div class="d-flex flex-wrap align-items-center gap-2">
                                     <div class="custom-file-wrapper @error('profile_photo') is-invalid @enderror">
                                         <input type="file" name="profile_photo" id="profile_photo" accept="image/jpeg,image/png,image/jpg,image/webp">
                                         <label for="profile_photo" class="custom-file-label">
@@ -35,7 +35,10 @@
                                         </label>
                                         <span class="custom-file-name text-secondary"></span>
                                     </div>
-                                    <small class="text-secondary d-block mt-1">JPG, PNG, WebP. Max 2MB. Lascia vuoto per mantenere l'attuale.</small>
+                                    <button type="submit" class="btn btn-warning btn-sm">
+                                        <i class="bi bi-upload me-1"></i> Carica foto
+                                    </button>
+                                    <small class="text-secondary d-block w-100 mt-1">JPG, PNG, WebP. Max 2MB. Lascia vuoto per mantenere l'attuale.</small>
                                 </div>
                             </div>
                             @error('profile_photo')
