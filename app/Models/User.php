@@ -64,8 +64,8 @@ class User extends Authenticatable
     {
         return Attribute::make(
             get: fn () => $this->profile_photo
-                ? asset('storage/' . $this->profile_photo)
-                : asset('images/foto-profilo-default-media.jpg'),
+                ? '/' . ltrim('storage/' . $this->profile_photo, '/')
+                : '/images/foto-profilo-default-media.jpg',
         );
     }
 
@@ -77,8 +77,8 @@ class User extends Authenticatable
     {
         return Attribute::make(
             get: fn () => $this->profile_photo
-                ? asset('storage/' . $this->profile_photo)
-                : asset('images/foto-profilo-default-piccola.jpg'),
+                ? '/' . ltrim('storage/' . $this->profile_photo, '/')
+                : '/images/foto-profilo-default-piccola.jpg',
         );
     }
 
