@@ -65,7 +65,8 @@
                         <table class="table table-dark table-hover mb-0 align-middle">
                             <thead class="bg-black text-warning text-uppercase small">
                                 <tr>
-                                    <th class="ps-4 py-3">Nome</th>
+                                    <th class="ps-4 py-3" style="width: 50px;"></th>
+                                    <th class="py-3">Nome</th>
                                     <th class="py-3">Cognome</th>
                                     <th class="py-3">Email</th>
                                     <th class="py-3">Data prenotazione</th>
@@ -74,24 +75,25 @@
                             </thead>
                             <tbody>
                                 @forelse($course->users as $user)
-                                <tr>
-                                    <td class="ps-4 fw-bold">
-                                        <a href="{{ route('coach.clients.show', $user->id) }}?from=course&course_id={{ $course->id }}" class="text-white text-decoration-none link-anagrafica">{{ $user->first_name }}</a>
+                                <tr class="table-row-course-user cursor-pointer" data-href="{{ route('coach.clients.show', $user->id) }}?from=course&course_id={{ $course->id }}" role="button" tabindex="0">
+                                    <td class="ps-4 py-2">
+                                        <img src="{{ $user->profile_photo_url_small }}" alt="" class="rounded-circle object-fit-cover" width="36" height="36" style="object-fit: cover;">
                                     </td>
-                                    <td>{{ $user->last_name }}</td>
-                                    <td>
-                                        <a href="mailto:{{ $user->email }}" class="text-warning text-decoration-none">{{ $user->email }}</a>
+                                    <td class="py-3 fw-bold">{{ $user->first_name }}</td>
+                                    <td class="py-3">{{ $user->last_name }}</td>
+                                    <td class="py-3">
+                                        <a href="mailto:{{ $user->email }}" class="text-warning text-decoration-none" onclick="event.stopPropagation()">{{ $user->email }}</a>
                                     </td>
-                                    <td class="text-secondary small">
+                                    <td class="py-3 text-secondary small">
                                         {{ $user->pivot->created_at ? $user->pivot->created_at->timezone('Europe/Rome')->format('d/m/Y H:i') : '—' }}
                                     </td>
-                                    <td class="pe-4 text-end">
+                                    <td class="pe-4 py-3 text-end" onclick="event.stopPropagation()">
                                         <a href="{{ route('coach.messages.startWithClient', $user->id) }}" class="btn btn-sm btn-warning"><i class="bi bi-chat-dots me-1"></i> Messaggio</a>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="5" class="text-center py-5 text-secondary italic">
+                                    <td colspan="6" class="text-center py-5 text-secondary italic">
                                         Nessun utente prenotato per questo corso.
                                     </td>
                                 </tr>
@@ -104,4 +106,29 @@
         </div>
     </div>
 </div>
+
+@push('styles')
+<style>
+.table-row-course-user { cursor: pointer; }
+.table-row-course-user:hover { background-color: rgba(255,255,255,0.05); }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.table-row-course-user[data-href]').forEach(function(row) {
+        row.addEventListener('click', function() {
+            window.location.href = this.dataset.href;
+        });
+        row.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                window.location.href = this.dataset.href;
+            }
+        });
+    });
+});
+</script>
+@endpush
 @endsection
