@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'profile_photo',
     ];
 
     /**
@@ -52,6 +53,32 @@ class User extends Authenticatable
     {
         return Attribute::make(
             get: fn () => "{$this->first_name} {$this->last_name}",
+        );
+    }
+
+    /**
+     * ACCESSOR: URL assoluto della foto profilo
+     * Restituisce l'URL della foto caricata se presente, altrimenti l'immagine default.
+     */
+    protected function profilePhotoUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->profile_photo
+                ? asset('storage/' . $this->profile_photo)
+                : asset('images/foto-profilo-default-media.jpg'),
+        );
+    }
+
+    /**
+     * ACCESSOR: URL foto profilo in risoluzione piccola (per tabelle/thumbnail)
+     * Usa foto-profilo-default-piccola.jpg quando l'utente non ha foto caricata.
+     */
+    protected function profilePhotoUrlSmall(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->profile_photo
+                ? asset('storage/' . $this->profile_photo)
+                : asset('images/foto-profilo-default-piccola.jpg'),
         );
     }
 

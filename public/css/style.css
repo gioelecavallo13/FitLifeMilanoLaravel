@@ -394,3 +394,54 @@ select.custom-input:valid {
     display: none;
     content: none;
 }
+
+/* --- CUSTOM FILE INPUT (scegli file) --- */
+.custom-file-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.custom-file-wrapper input[type="file"] {
+    position: absolute;
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.custom-file-wrapper .custom-file-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #2c2c2c;
+    border: 1px solid #555;
+    border-radius: 8px;
+    color: #ffcc00;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.custom-file-wrapper .custom-file-label:hover {
+    background: #3a3a3a;
+    border-color: #ffcc00;
+    box-shadow: 0 0 0 2px rgba(255, 204, 0, 0.2);
+}
+
+.custom-file-wrapper .custom-file-label:active {
+    transform: scale(0.98);
+}
+
+.custom-file-wrapper .custom-file-name {
+    font-size: 0.85rem;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

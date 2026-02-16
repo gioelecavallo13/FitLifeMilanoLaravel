@@ -8,6 +8,7 @@ use App\Http\Controllers\Client\ClientController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\Admin\AdminConversationController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,6 +47,10 @@ Route::middleware(['auth'])->group(function () {
         }
         return redirect()->route('client.dashboard');
     })->name('dashboard.selector');
+
+    // Profilo utente (accessibile a tutti gli autenticati)
+    Route::get('/profilo', [ProfileController::class, 'show'])->name('profile.show');
+    Route::post('/profilo/foto', [ProfileController::class, 'updatePhoto'])->name('profile.updatePhoto');
 
     // --- GRUPPO AMMINISTRATORI ---
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {

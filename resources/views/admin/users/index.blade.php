@@ -35,7 +35,8 @@
         <table class="table table-dark table-hover border-secondary align-middle">
             <thead class="table-black text-secondary">
                 <tr>
-                    <th class="ps-4 py-3">NOME</th>
+                    <th class="ps-4 py-3" style="width: 50px;"></th>
+                    <th class="py-3">NOME</th>
                     <th class="py-3">COGNOME</th>
                     <th class="py-3">EMAIL</th>
                     <th class="py-3">RUOLO</th>
@@ -45,7 +46,10 @@
             <tbody>
                 @forelse($users as $user)
                 <tr class="table-row-chat cursor-pointer" data-href="{{ route('admin.users.show', $user->id) }}" role="button" tabindex="0">
-                    <td class="ps-4 py-3 fw-bold">{{ $user->first_name }}</td>
+                    <td class="ps-4 py-2">
+                        <img src="{{ $user->profile_photo_url_small }}" alt="" class="rounded-circle object-fit-cover" width="36" height="36" style="object-fit: cover;">
+                    </td>
+                    <td class="py-3 fw-bold">{{ $user->first_name }}</td>
                     <td class="py-3">{{ $user->last_name }}</td>
                     <td class="py-3 text-info">{{ $user->email }}</td>
                     <td class="py-3">
@@ -57,7 +61,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5" class="text-center py-4 text-secondary">Nessun utente trovato con questi criteri.</td>
+                    <td colspan="6" class="text-center py-4 text-secondary">Nessun utente trovato con questi criteri.</td>
                 </tr>
                 @endforelse
             </tbody>

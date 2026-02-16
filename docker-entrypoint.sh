@@ -3,6 +3,7 @@ set -e
 
 php artisan config:clear
 php artisan cache:clear
+mkdir -p storage/app/public
 php artisan storage:link || true
 php artisan migrate --force
 

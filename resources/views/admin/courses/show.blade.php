@@ -86,7 +86,8 @@
                         <table class="table table-dark table-hover mb-0 align-middle">
                             <thead class="bg-black text-warning text-uppercase small">
                                 <tr>
-                                    <th class="ps-4 py-3">Nome</th>
+                                    <th class="ps-4 py-3" style="width: 50px;"></th>
+                                    <th class="py-3">Nome</th>
                                     <th class="py-3">Cognome</th>
                                     <th class="py-3">Email</th>
                                     <th class="py-3">Data prenotazione</th>
@@ -116,7 +117,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="5" class="text-center py-5 text-secondary italic">
+                                    <td colspan="6" class="text-center py-5 text-secondary italic">
                                         Nessun utente prenotato per questo corso.
                                     </td>
                                 </tr>

@@ -73,7 +73,8 @@
                         <table class="table table-dark table-hover mb-0 align-middle">
                             <thead class="bg-black text-primary text-uppercase small">
                                 <tr>
-                                    <th class="ps-4 py-3">Cliente</th>
+                                    <th class="ps-4 py-3" style="width: 50px;"></th>
+                                    <th class="py-3">Cliente</th>
                                     <th class="py-3">Email</th>
                                     <th class="py-3 pe-4">Data Reg.</th>
                                 </tr>
@@ -83,7 +84,10 @@
                                 @isset($clients)
                                     @forelse($clients as $client)
                                     <tr class="table-row-chat cursor-pointer" data-href="{{ route('admin.users.show', $client->id) }}?from=client" role="button" tabindex="0">
-                                        <td class="ps-4 py-3">
+                                        <td class="ps-4 py-2">
+                                            <img src="{{ $client->profile_photo_url_small }}" alt="" class="rounded-circle object-fit-cover" width="36" height="36" style="object-fit: cover;">
+                                        </td>
+                                        <td class="py-3">
                                             <div class="fw-bold">{{ $client->first_name }} {{ $client->last_name }}</div>
                                             <span class="badge bg-outline-info border border-info text-info" style="font-size: 0.65rem;">CLIENTE</span>
                                         </td>
@@ -94,14 +98,14 @@
                                     </tr>
                                     @empty
                                     <tr>
-                                        <td colspan="3" class="text-center py-5 text-secondary italic">
+                                        <td colspan="4" class="text-center py-5 text-secondary italic">
                                             Nessun cliente presente nel database.
                                         </td>
                                     </tr>
                                     @endforelse
                                 @else
                                     <tr>
-                                        <td colspan="3" class="text-center py-5 text-warning">
+                                        <td colspan="4" class="text-center py-5 text-warning">
                                             Caricamento lista... (Verifica variabile $clients nel controller)
                                         </td>
                                     </tr>

@@ -12,9 +12,36 @@
                     <small class="text-secondary">{{ $user->email }}</small>
                 </div>
                 <div class="card-body p-4">
-                    <form action="{{ route('admin.users.update', $user->id) }}" method="POST">
+                    <form action="{{ route('admin.users.update', $user->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
+
+                        {{-- Foto profilo (solo admin può modificarla) --}}
+                        <div class="mb-4">
+                            <label class="form-label small text-secondary fw-bold">FOTO PROFILO</label>
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                @if($user->profile_photo_url)
+                                    <img src="{{ $user->profile_photo_url }}" alt="Foto attuale" class="rounded-circle object-fit-cover" width="80" height="80" style="object-fit: cover;">
+                                @else
+                                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white" style="width: 80px; height: 80px;">
+                                        <i class="bi bi-person-circle fs-2"></i>
+                                    </div>
+                                @endif
+                                <div>
+                                    <div class="custom-file-wrapper @error('profile_photo') is-invalid @enderror">
+                                        <input type="file" name="profile_photo" id="profile_photo" accept="image/jpeg,image/png,image/jpg,image/webp">
+                                        <label for="profile_photo" class="custom-file-label">
+                                            <i class="bi bi-camera-fill"></i> Scegli immagine
+                                        </label>
+                                        <span class="custom-file-name text-secondary"></span>
+                                    </div>
+                                    <small class="text-secondary d-block mt-1">JPG, PNG, WebP. Max 2MB. Lascia vuoto per mantenere l'attuale.</small>
+                                </div>
+                            </div>
+                            @error('profile_photo')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
 
                         <div class="row">
                             {{-- Nome --}}
@@ -74,4 +101,18 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.custom-file-wrapper input[type="file"]').forEach(function(input) {
+        input.addEventListener('change', function() {
+            var name = this.files.length ? this.files[0].name : '';
+            var span = this.closest('.custom-file-wrapper').querySelector('.custom-file-name');
+            if (span) span.textContent = name;
+        });
+    });
+});
+</script>
+@endpush
 @endsection

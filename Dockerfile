@@ -21,8 +21,9 @@ COPY . .
 ENV COMPOSER_MEMORY_LIMIT=-1
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts --ignore-platform-reqs
 
-# Permessi: assicurati che www-data possa leggere il certificato
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/ca.pem
+# Crea storage/app/public per le foto profilo e permessi
+RUN mkdir -p /var/www/html/storage/app/public && \
+    chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/ca.pem
 
 RUN chmod +x docker-entrypoint.sh
 

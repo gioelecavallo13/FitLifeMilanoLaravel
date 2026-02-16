@@ -15,6 +15,20 @@
                     <h3 class="mb-0 text-primary h4">Dati utente</h3>
                 </div>
                 <div class="card-body p-4">
+                    <div class="row mb-4">
+                        <div class="col-auto">
+                            @if($user->profile_photo_url)
+                                <img src="{{ $user->profile_photo_url }}" alt="Foto profilo" class="rounded-circle object-fit-cover" width="120" height="120" style="object-fit: cover;">
+                            @else
+                                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white" style="width: 120px; height: 120px;">
+                                    <i class="bi bi-person-circle display-4"></i>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="col">
+                            <p class="text-secondary small mb-0">Foto profilo</p>
+                        </div>
+                    </div>
                     <div class="row mb-3">
                         <div class="col-md-6 mb-3 mb-md-0">
                             <label class="text-secondary small text-uppercase fw-bold d-block">Nome</label>

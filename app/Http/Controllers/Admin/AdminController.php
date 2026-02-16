@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -274,8 +275,31 @@ class AdminController extends Controller
     public function userUpdate(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        $user->update($request->only(['first_name', 'last_name', 'email', 'role']));
-        return redirect()->route('admin.users.index')->with('success', 'Utente aggiornato!');
+
+        $validated = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
+            'role' => 'required|in:admin,coach,client',
+            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ]);
+
+        $user->first_name = $validated['first_name'];
+        $user->last_name = $validated['last_name'];
+        $user->email = $validated['email'];
+        $user->role = $validated['role'];
+
+        if ($request->hasFile('profile_photo')) {
+            if ($user->profile_photo) {
+                Storage::disk('public')->delete($user->profile_photo);
+            }
+            $path = $request->file('profile_photo')->store('profile-photos', 'public');
+            $user->profile_photo = $path;
+        }
+
+        $user->save();
+
+        return redirect()->route('admin.users.show', $id)->with('success', 'Utente aggiornato!');
     }
 
     public function userDestroy($id)

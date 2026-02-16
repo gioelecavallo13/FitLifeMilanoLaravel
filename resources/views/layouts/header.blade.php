@@ -49,6 +49,11 @@
                     <i class="bi bi-speedometer2 me-2"></i>Dashboard
                 </a>
             </li>
+            <li>
+                <a class="dropdown-item py-2" href="{{ route('profile.show') }}">
+                    <i class="bi bi-person-circle me-2"></i>Profilo
+                </a>
+            </li>
             <li><hr class="dropdown-divider border-secondary"></li>
             <li>
                 <form action="{{ route('logout') }}" method="POST" class="m-0">

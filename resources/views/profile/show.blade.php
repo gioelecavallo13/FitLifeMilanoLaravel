@@ -1,13 +1,12 @@
 @extends('layouts.layout')
-@section('title', 'Anagrafica: ' . $user->first_name . ' ' . $user->last_name . " | " . config("app.name"))
+@section('title', 'Il mio profilo' . " | " . config("app.name"))
 @section('content')
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-10">
-
             <x-breadcrumb :items="$breadcrumb" />
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="text-white fw-bold text-uppercase mb-0 h4">Anagrafica: {{ $user->first_name }} {{ $user->last_name }}</h1>
+                <h1 class="text-white fw-bold text-uppercase mb-0 h4">Il mio profilo</h1>
             </div>
 
             {{-- Card Dati utente --}}
@@ -21,14 +20,29 @@
                             @if($user->profile_photo_url)
                                 <img src="{{ $user->profile_photo_url }}" alt="Foto profilo" class="rounded-circle object-fit-cover" width="120" height="120" style="object-fit: cover;">
                             @else
-                                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white" style="width: 120px; height: 120px;">
+                                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white" width="120" height="120" style="width: 120px; height: 120px;">
                                     <i class="bi bi-person-circle display-4"></i>
                                 </div>
                             @endif
                         </div>
                         <div class="col">
-                            <p class="text-secondary small mb-0">Foto profilo</p>
-                            <p class="small mb-0">Modifica dalla pagina <a href="{{ route('admin.users.edit', $user->id) }}" class="text-warning">Modifica dati</a></p>
+                            <p class="text-secondary small mb-2">Foto profilo</p>
+                            <form action="{{ route('profile.updatePhoto') }}" method="POST" enctype="multipart/form-data" class="d-flex flex-wrap align-items-center gap-2">
+                                @csrf
+                                <div class="custom-file-wrapper @error('profile_photo') is-invalid @enderror">
+                                    <input type="file" name="profile_photo" id="profile_photo" accept="image/jpeg,image/png,image/jpg,image/webp" required>
+                                    <label for="profile_photo" class="custom-file-label">
+                                        <i class="bi bi-camera-fill"></i> Scegli immagine
+                                    </label>
+                                    <span class="custom-file-name text-secondary"></span>
+                                </div>
+                                <button type="submit" class="btn btn-warning btn-sm">
+                                    <i class="bi bi-upload me-1"></i> Carica foto
+                                </button>
+                                @error('profile_photo')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </form>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -60,19 +74,6 @@
                         <span>{{ $user->created_at->timezone('Europe/Rome')->format('d/m/Y H:i') }}</span>
                     </div>
                 </div>
-                <div class="card-footer border-primary bg-black p-4 d-flex gap-2 flex-wrap">
-                    <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-warning fw-bold">
-                        <i class="bi bi-pencil-square"></i> Modifica dati
-                    </a>
-                    <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="d-inline"
-                          onsubmit="return confirm('Sei sicuro di voler eliminare l\'utente {{ $user->email }}? Questa azione è irreversibile.')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-outline-danger fw-bold">
-                            <i class="bi bi-trash"></i> Elimina utente
-                        </button>
-                    </form>
-                </div>
             </div>
 
             @php
@@ -84,7 +85,7 @@
             <div class="card bg-dark border-warning text-white shadow-lg">
                 <div class="card-header border-warning bg-black p-3">
                     <h5 class="mb-0 fw-bold text-uppercase text-warning">
-                        <i class="bi bi-person-badge me-2"></i>Corsi di cui è personal trainer ({{ $user->createdCourses->count() }})
+                        <i class="bi bi-person-badge me-2"></i>I miei corsi ({{ $user->createdCourses->count() }})
                     </h5>
                 </div>
                 <div class="card-body p-0">
@@ -99,7 +100,7 @@
                             </thead>
                             <tbody>
                                 @forelse($user->createdCourses as $course)
-                                <tr class="table-row-chat cursor-pointer" data-href="{{ route('admin.courses.show', $course->id) }}" role="button" tabindex="0">
+                                <tr class="table-row-chat cursor-pointer" data-href="{{ route('coach.courses.show', $course->id) }}" role="button" tabindex="0">
                                     <td class="ps-4 py-3 fw-bold text-warning">{{ $course->name }}</td>
                                     <td class="py-3">{{ $giorni[$course->day_of_week] ?? $course->day_of_week }}</td>
                                     <td class="py-3 pe-4">{{ \Carbon\Carbon::parse($course->start_time)->format('H:i') }} – {{ \Carbon\Carbon::parse($course->end_time)->format('H:i') }}</td>
@@ -117,11 +118,11 @@
                 </div>
             </div>
             @elseif($user->role === 'client')
-            {{-- Card Corsi a cui è prenotato (solo clienti) --}}
+            {{-- Card Corsi a cui è prenotato --}}
             <div class="card bg-dark border-warning text-white shadow-lg">
                 <div class="card-header border-warning bg-black p-3">
                     <h5 class="mb-0 fw-bold text-uppercase text-warning">
-                        <i class="bi bi-calendar-check me-2"></i>Corsi a cui è prenotato ({{ $user->courses->count() }})
+                        <i class="bi bi-calendar-check me-2"></i>I corsi a cui sono prenotato ({{ $user->courses->count() }})
                     </h5>
                 </div>
                 <div class="card-body p-0">
@@ -138,7 +139,7 @@
                             </thead>
                             <tbody>
                                 @forelse($user->courses as $course)
-                                <tr class="table-row-chat cursor-pointer" data-href="{{ route('admin.courses.show', $course->id) }}" role="button" tabindex="0">
+                                <tr class="table-row-chat cursor-pointer" data-href="{{ route('client.courses.show', $course->id) }}" role="button" tabindex="0">
                                     <td class="ps-4 py-3 fw-bold text-warning">{{ $course->name }}</td>
                                     <td class="py-3">{{ $course->coach ? $course->coach->first_name . ' ' . $course->coach->last_name : 'N/D' }}</td>
                                     <td class="py-3">{{ $giorni[$course->day_of_week] ?? $course->day_of_week }}</td>
@@ -186,6 +187,13 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.custom-file-wrapper input[type="file"]').forEach(function(input) {
+        input.addEventListener('change', function() {
+            var name = this.files.length ? this.files[0].name : '';
+            var span = this.closest('.custom-file-wrapper').querySelector('.custom-file-name');
+            if (span) span.textContent = name;
+        });
+    });
     document.querySelectorAll('.table-row-chat[data-href]').forEach(function(row) {
         row.addEventListener('click', function() {
             window.location.href = this.dataset.href;
