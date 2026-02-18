@@ -19,8 +19,7 @@ WORKDIR /var/www/html
 COPY . .
 
 ENV COMPOSER_MEMORY_LIMIT=-1
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts --ignore-platform-reqs && \
-    composer dump-autoload --optimize
+RUN php -d memory_limit=-1 /usr/bin/composer install --no-dev --optimize-autoloader --no-interaction --no-scripts --ignore-platform-reqs --no-progress
 
 # Crea storage per sessioni/cache e imposta permessi
 RUN mkdir -p /var/www/html/storage/app/public && \
