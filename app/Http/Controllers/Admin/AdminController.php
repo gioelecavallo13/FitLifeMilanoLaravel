@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -290,11 +289,9 @@ class AdminController extends Controller
         $user->role = $validated['role'];
 
         if ($request->hasFile('profile_photo')) {
-            if ($user->profile_photo) {
-                Storage::disk('public')->delete($user->profile_photo);
-            }
-            $path = $request->file('profile_photo')->store('profile-photos', 'public');
-            $user->profile_photo = $path;
+            $data = User::processProfilePhotoFromUpload($request->file('profile_photo'));
+            $user->profile_photo = $data['profile_photo'];
+            $user->profile_photo_mime = $data['profile_photo_mime'];
         }
 
         $user->save();

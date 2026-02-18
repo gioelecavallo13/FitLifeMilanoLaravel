@@ -7,7 +7,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Casts\Attribute; // Necessario per il nuovo stile degli Accessors
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Http\UploadedFile;
+use Intervention\Image\Laravel\Facades\Image;
 
 class User extends Authenticatable
 {
@@ -15,7 +17,6 @@ class User extends Authenticatable
 
     /**
      * I campi che possono essere popolati (Mass Assignment)
-     * Abbiamo rimosso 'name' a favore della struttura atomica.
      */
     protected $fillable = [
         'first_name',
@@ -24,6 +25,7 @@ class User extends Authenticatable
         'password',
         'role',
         'profile_photo',
+        'profile_photo_mime',
     ];
 
     /**
@@ -32,6 +34,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'profile_photo',
     ];
 
     /**
@@ -58,28 +61,43 @@ class User extends Authenticatable
 
     /**
      * ACCESSOR: URL assoluto della foto profilo
-     * Restituisce l'URL della foto caricata se presente, altrimenti l'immagine default.
+     * Restituisce l'URL dell'endpoint che serve la foto dal DB, o l'immagine default.
      */
     protected function profilePhotoUrl(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->profile_photo
-                ? '/' . ltrim('storage/' . $this->profile_photo, '/')
+            get: fn () => !empty($this->attributes['profile_photo'] ?? null)
+                ? route('profile.photo', $this->id)
                 : '/images/foto-profilo-default-media.jpg',
         );
     }
 
     /**
      * ACCESSOR: URL foto profilo in risoluzione piccola (per tabelle/thumbnail)
-     * Usa foto-profilo-default-piccola.jpg quando l'utente non ha foto caricata.
+     * Stesso URL dell'immagine compressa (150x150).
      */
     protected function profilePhotoUrlSmall(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->profile_photo
-                ? '/' . ltrim('storage/' . $this->profile_photo, '/')
+            get: fn () => !empty($this->attributes['profile_photo'] ?? null)
+                ? route('profile.photo', $this->id)
                 : '/images/foto-profilo-default-piccola.jpg',
         );
+    }
+
+    /**
+     * Processa un file caricato: ridimensiona a 150x150, comprime in JPEG 75%.
+     * Restituisce ['profile_photo' => binary, 'profile_photo_mime' => 'image/jpeg'].
+     */
+    public static function processProfilePhotoFromUpload(UploadedFile $file): array
+    {
+        $image = Image::read($file)->cover(150, 150);
+        $encoded = $image->toJpeg(75);
+
+        return [
+            'profile_photo' => (string) $encoded,
+            'profile_photo_mime' => 'image/jpeg',
+        ];
     }
 
     /**

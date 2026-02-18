@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -24,7 +23,8 @@ class ProfileController extends Controller
     }
 
     /**
-     * Aggiorna la foto profilo dell'utente corrente
+     * Aggiorna la foto profilo dell'utente corrente.
+     * L'immagine viene ridimensionata a 150x150 e compressa in JPEG 75% prima del salvataggio nel DB.
      */
     public function updatePhoto(Request $request)
     {
@@ -33,15 +33,8 @@ class ProfileController extends Controller
         ]);
 
         $user = Auth::user();
-
-        // Elimina la vecchia foto se presente
-        if ($user->profile_photo) {
-            Storage::disk('public')->delete($user->profile_photo);
-        }
-
-        // Salva la nuova foto
-        $path = $request->file('profile_photo')->store('profile-photos', 'public');
-        $user->update(['profile_photo' => $path]);
+        $data = \App\Models\User::processProfilePhotoFromUpload($request->file('profile_photo'));
+        $user->update($data);
 
         return redirect()->route('profile.show')->with('success', 'Foto profilo aggiornata con successo!');
     }

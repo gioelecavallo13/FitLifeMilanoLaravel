@@ -19,9 +19,10 @@ WORKDIR /var/www/html
 COPY . .
 
 ENV COMPOSER_MEMORY_LIMIT=-1
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts --ignore-platform-reqs
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts --ignore-platform-reqs && \
+    composer dump-autoload --optimize
 
-# Crea storage/app/public per le foto profilo e permessi
+# Crea storage per sessioni/cache e imposta permessi
 RUN mkdir -p /var/www/html/storage/app/public && \
     chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/ca.pem
 

@@ -29,7 +29,16 @@
 ```bash
 php artisan queue:work --queue=broadcasts,default
 ```
-In produzione usare Supervisor per tenere il worker attivo.
+In produzione usare Supervisor per tenere il worker attivo. Configurazione di esempio in `config/supervisor-fitlife.conf`.
+
+**Immagini default foto profilo:** in `public/images/` devono essere presenti `foto-profilo-default-media.jpg` e `foto-profilo-default-piccola.jpg` (placeholder per utenti senza foto). Sono incluse nel repository.
+
+**Checklist pre-deploy:**
+1. `APP_DEBUG=false`, `APP_ENV=production`, `APP_KEY` impostato in `.env`
+2. Migrazioni eseguite (`php artisan migrate --force`, già nell'entrypoint Docker)
+3. Cache artefact dopo il deploy (`php deploy-cache.php`)
+4. Immagini default in `public/images/` (foto-profilo-default-*.jpg)
+5. Queue worker attivo (Supervisor o equivalente)
 
 **Cache artefact (eseguire dopo ogni deploy o modifica a config/route/view):**
 ```bash
